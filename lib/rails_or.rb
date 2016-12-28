@@ -6,12 +6,12 @@ class ActiveRecord::Relation
   if method_defined?(:or)
     alias rails5_or or
     def or(other)
-      other = self.except(:where).where(other) if other.class == Hash
+      other = self.except(:where).where(other) if other.class == Hash or other.class == String
       return rails5_or(other)
     end
   else
     def or(other)
-      other = self.except(:where).where(other) if other.class == Hash
+      other = self.except(:where).where(other) if other.class == Hash or other.class == String
       combining = group_values.any? ? :having : :where
       left_values = send("#{combining}_values")
       right_values = other.send("#{combining}_values")
