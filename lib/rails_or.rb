@@ -30,3 +30,8 @@ class ActiveRecord::Relation
     end
   end
 end
+class ActiveRecord::Base
+  def self.or(*args)
+    self.where('').or(*args)
+  end
+end
