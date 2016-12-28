@@ -11,7 +11,10 @@ class ActiveRecord::Relation
     end
   else
     def or(other)
-      other = self.except(:where).where(other) if other.class == Hash or other.class == String
+      case other
+      when Hash   ; other = self.except(:where).where(other.to_a.map{|s| s[0] = "#{s[0]} = ?" ; next s}.flatten) #TODO why hash is not working?
+      when String ; other = self.except(:where).where(other)
+      end
       combining = group_values.any? ? :having : :where
       left_values = send("#{combining}_values")
       right_values = other.send("#{combining}_values")
