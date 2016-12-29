@@ -27,16 +27,17 @@ Or install it yourself as:
 
 ### Same as Rails 5's #or method
 ```rb
-Post.where(:id => 1).or(Post.where(:id => 2)).pluck(:id) 
-# => [1, 2]
+Person.where(:name => 'Pearl').or(Person.where(:age => 24))
+# is the same as
+Person.where("name = ? OR age = ?", 'Pearl', 24)
 ```
 
-### Use Hash/Array/String as arguments
+### Support using Hash/Array/String as arguments
 ```rb
-Post.where(:id => 1).or(:id => 2).pluck(:id)  # => [1, 2]
-Post.where(:id => 1).or(['id = ?', 2]).pluck(:id) # => [1, 2]
-Post.where(:id => 1).or('id = ?', 2).pluck(:id) # => [1, 2]
-Post.where(:id => 1).or('id = 2').pluck(:id) # => [1, 2]
+Person.where(:name => 'Pearl').or(:age => 24)
+Person.where(:name => 'Pearl').or(['age = ?', 24])
+Person.where(:name => 'Pearl').or('age = ?', 24)
+Person.where(:name => 'Pearl').or('age = 24')
 ```
 
 
