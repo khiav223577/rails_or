@@ -25,6 +25,20 @@ Or install it yourself as:
 
 ## Usage
 
+### Same as Rails 5's #or method
+```rb
+Post.where(:id => 1).or(Post.where(:id => 2)).pluck(:id) 
+# => [1, 2]
+```
+
+### Use Hash/Array/String as arguments
+```rb
+Post.where(:id => 1).or(:id => 2).pluck(:id)  # => [1, 2]
+Post.where(:id => 1).or(['id = ?', 2]).pluck(:id) # => [1, 2]
+Post.where(:id => 1).or('id = ?', 2).pluck(:id) # => [1, 2]
+Post.where(:id => 1).or('id = 2').pluck(:id) # => [1, 2]
+```
+
 
 ## Development
 
