@@ -31,6 +31,6 @@ class RailsOrTest < Minitest::Test
   end
   def test_or_without_right_where
     expected = Post.all.to_a
-    assert_equal expected, Post.where('id = 1').or(Post.all).to_a
+    assert_equal expected, Post.where('id = 1').or(Post.where('')).to_a
   end
 end
