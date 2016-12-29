@@ -1,7 +1,8 @@
-[![Gem Version](https://badge.fury.io/rb/rails_or.svg)](http://badge.fury.io/rb/rails_or)
+[![Gem Version](https://img.shields.io/gem/v/rails_or.svg?style=flat)](ruby_gems)
+[![Build Status](https://travis-ci.org/khiav223577/rails_or.svg?branch=master)](https://travis-ci.org/khiav223577/rails_or)
+[![RubyGems](http://img.shields.io/gem/dt/rails_or.svg?style=flat)](ruby_gems)
 [![Code Climate](https://codeclimate.com/github/khiav223577/rails_or/badges/gpa.svg)](https://codeclimate.com/github/khiav223577/rails_or)
 [![Test Coverage](https://codeclimate.com/github/khiav223577/rails_or/badges/coverage.svg)](https://codeclimate.com/github/khiav223577/rails_or/coverage)
-[![Build Status](https://travis-ci.org/khiav223577/rails_or.svg?branch=master)](https://travis-ci.org/khiav223577/rails_or)
 
 # RailsOr
 
