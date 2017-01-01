@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["khiav reoy"]
   spec.email         = ["mrtmrt15xn@yahoo.com.tw"]
 
-  spec.summary       = %q{Support #or query method in Rails 3, 4, 5}
-  spec.description   = %q{#or query is support only in new-coming Rails 5. This gem support it in Rails 3 and 4, too.}
+  spec.summary       = %q{Support and entend #or query method.}
+  spec.description   = %q{Support and entend #or query method in Rails 3, 4, 5.}
   spec.homepage      = "https://github.com/khiav223577/rails_or"
   spec.license       = "MIT"
 
