@@ -39,6 +39,17 @@ class RailsOrTest < Minitest::Test
     assert_equal expected, Post.where('id = 1').or(:title => "Kathenrie's post1").to_a
   end
 #--------------------------------
+#  logic order
+#--------------------------------
+  def test_A_and_B_or_C #(A && B) || C
+    expected = Post.where('(user_id = ? AND title = ?) OR user_id = ?', 1, "John's post1", 2).to_a
+    assert_equal expected, Post.where(:user_id => 1).where(:title => "John's post1").or(:user_id => 2).to_a
+  end
+  def test_A_or_B_and_C #(A || B) && C
+    expected = Post.where('(user_id = ? OR user_id = ?) AND title LIKE ?', 1, 2, "John's %").to_a
+    assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).where('title LIKE ?', "John's %").to_a
+  end
+#--------------------------------
 #  From Rails 5
 #--------------------------------
   def test_or_with_relation
