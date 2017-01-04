@@ -49,6 +49,14 @@ class RailsOrTest < Minitest::Test
     expected = Post.where('(user_id = ? OR user_id = ?) AND title LIKE ?', 1, 2, "John's %").to_a
     assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).where('title LIKE ?', "John's %").to_a
   end
+  def test_A_and_not_B_or_C #(A && !B) || C
+    expected = Post.where('(user_id = ? AND NOT title = ?) OR user_id = ?', 1, "John's post1", 2).to_a
+    assert_equal expected, Post.where(:user_id => 1).where.not(:title => "John's post1").or(:user_id => 2).to_a
+  end
+  def test_A_or_B_and_not_C #(A || B) && !C
+    expected = Post.where('(user_id = ? OR user_id = ?) AND title NOT LIKE ?', 1, 2, "John's %").to_a
+    assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).where.not('title LIKE ?', "John's %").to_a
+  end
 #--------------------------------
 #  From Rails 5
 #--------------------------------
