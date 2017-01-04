@@ -27,6 +27,9 @@ class ActiveRecord::Relation
       return self  
     end
   end
+  def or_not(*args)
+    return self.or(self.where.not(*args))
+  end
 private
   def parse_or_parameter(*other)
     other = other.first if other.size == 1
