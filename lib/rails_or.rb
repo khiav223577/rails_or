@@ -10,9 +10,10 @@ class ActiveRecord::Relation
     end
   else
     def or(*other)
+      other        = parse_or_parameter(*other)
       combining    = group_values.any? ? :having : :where
       left_values  = send("#{combining}_values")
-      right_values = parse_or_parameter(*other).send("#{combining}_values")
+      right_values = other.send("#{combining}_values")
       common       = left_values & right_values
       mine         = left_values - common
       theirs       = right_values - common
@@ -24,6 +25,7 @@ class ActiveRecord::Relation
         common << Arel::Nodes::Or.new(mine.first, theirs.first)
       end
       send("#{combining}_values=", common)
+      self.bind_values = self.bind_values + other.bind_values
       return self  
     end
   end
@@ -31,9 +33,9 @@ private
   def parse_or_parameter(*other)
     other = other.first if other.size == 1
     case other
-    when Hash   ; self.except(:where).where(other.to_a.map{|s| s[0] = "#{s[0]} = ?" ; next s}.flatten) #TODO why hash is not working?
-    when Array  ; self.except(:where).where(other)
-    when String ; self.except(:where).where(other)
+    when Hash   ; klass.where(other)
+    when Array  ; klass.where(other)
+    when String ; klass.where(other)
     else        ; other
     end
   end
