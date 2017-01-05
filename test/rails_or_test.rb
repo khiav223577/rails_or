@@ -10,6 +10,14 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
 #  Parameter check
 #--------------------------------
+  def test_or_with_model1
+    expected = Post.where('id = 1 or id = 2').to_a
+    assert_equal expected, Post.where('id = 1').or(Post.where('id = 2')).to_a
+  end
+  def test_or_with_model2
+    expected = Post.where('id = 1 or id = 2').to_a
+    assert_equal expected, Post.where(:id => 1).or(Post.where(:id => 2)).to_a
+  end
   def test_or_with_string_argument
     expected = Post.where('id = 1 or id = 2').to_a
     assert_equal expected, Post.where('id = 1').or('id = 2').to_a
