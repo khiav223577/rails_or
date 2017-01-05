@@ -6,7 +6,7 @@
 
 # RailsOr
 
-Support #or query method in Rails 3, 4, 5
+Support and extend #or query method in Rails 3, 4, 5.
 
 ## Installation
 
