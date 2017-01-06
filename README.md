@@ -6,7 +6,7 @@
 
 # RailsOr
 
-Support / Add syntax sugar to #or query method in Rails 3, 4, 5.
+Support && Add syntax sugar to #or query method in Rails 3, 4, 5.
 
 ## Installation
 
