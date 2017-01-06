@@ -82,9 +82,9 @@ class RailsOrTest < Minitest::Test
       expected = Post.where('user_id = 1 OR user_id = 2').limit(4).to_a
       assert_equal expected, Post.limit(4).where(:user_id => 1).or(:user_id => 2).to_a
     end
-    def test_or_with_distinct #Rails 5 doesn't support this
-      expected = Post.distinct.where('user_id = 1 OR user_id = 2').pluck(:user_id)
-      assert_equal expected, Post.distinct.where(:user_id => 1).or(:user_id => 2).pluck(:user_id)
+    def test_or_with_uniq #Rails 5 doesn't support this
+      expected = Post.uniq.where('user_id = 1 OR user_id = 2').pluck(:user_id)
+      assert_equal expected, Post.uniq.where(:user_id => 1).or(:user_id => 2).pluck(:user_id)
     end
     def test_or_with_offset #Rails 5 doesn't support this
       expected = Post.where('user_id = 1 OR user_id = 2').offset(3).first
