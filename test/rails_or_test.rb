@@ -51,14 +51,16 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
   def test_or_with_join
     expected = User.joins(:posts).where('user_id = 1 AND (title = ? OR title = ? OR title = ?)', "John's post1", "John's post2", "John's post3").to_a
-    assert_equal expected, User.joins(:posts).where(0)
+    assert_equal expected, User.joins(:posts).where('0')
                                .or(:id => 1, :'posts.title' => "John's post1")
                                .or(:id => 1, :'posts.title' => "John's post2")
                                .or(:id => 1, :'posts.title' => "John's post3").to_a
   end
-  def test_or_with_join_and_no_join
-    expected = User.joins(:posts).where('user_id = 1 AND title = ? OR user_id = 2', "John's post2").to_a
-    assert_equal expected, User.joins(:posts).where(:id => 1, :'posts.title' => "John's post2").or(:id => 2).to_a
+  if Gem::Version.new(Rails::VERSION::STRING) < Gem::Version.new('5.0.0')
+    def test_or_with_join_and_no_join #Rails 5 doesn't support this
+      expected = User.joins(:posts).where('user_id = 1 AND title = ? OR user_id = 2', "John's post2").to_a
+      assert_equal expected, User.joins(:posts).where(:id => 1, :'posts.title' => "John's post2").or(:id => 2).to_a
+    end
   end
 #--------------------------------
 #  having
@@ -73,23 +75,25 @@ class RailsOrTest < Minitest::Test
     assert_equal expected, User.joins(:posts).group(:user_id).having("COUNT(*) > 1").or_having("COUNT(*) = 1").to_a
   end
 #--------------------------------
-#  distinct / limit / offset / order
+#  uniq / limit / offset / order
 #--------------------------------
-  def test_or_with_limit
-    expected = Post.where('user_id = 1 OR user_id = 2').limit(4).to_a
-    assert_equal expected, Post.limit(4).where(:user_id => 1).or(:user_id => 2).to_a
-  end
-  def test_or_with_distinct
-    expected = Post.distinct.where('user_id = 1 OR user_id = 2').pluck(:user_id)
-    assert_equal expected, Post.distinct.where(:user_id => 1).or(:user_id => 2).pluck(:user_id)
-  end
-  def test_or_with_offset
-    expected = Post.where('user_id = 1 OR user_id = 2').offset(3).first
-    assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).offset(3).first
-  end
-  def test_or_with_order
-    expected = Post.where('user_id = 1 OR user_id = 2 OR user_id = 3').order('user_id desc').pluck(:user_id)
-    assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).or(:user_id => 3).order('user_id desc').pluck(:user_id)
+  if Gem::Version.new(Rails::VERSION::STRING) < Gem::Version.new('5.0.0')
+    def test_or_with_limit #Rails 5 doesn't support this
+      expected = Post.where('user_id = 1 OR user_id = 2').limit(4).to_a
+      assert_equal expected, Post.limit(4).where(:user_id => 1).or(:user_id => 2).to_a
+    end
+    def test_or_with_distinct #Rails 5 doesn't support this
+      expected = Post.distinct.where('user_id = 1 OR user_id = 2').pluck(:user_id)
+      assert_equal expected, Post.distinct.where(:user_id => 1).or(:user_id => 2).pluck(:user_id)
+    end
+    def test_or_with_offset #Rails 5 doesn't support this
+      expected = Post.where('user_id = 1 OR user_id = 2').offset(3).first
+      assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).offset(3).first
+    end
+    def test_or_with_order #Rails 5 doesn't support this
+      expected = Post.where('user_id = 1 OR user_id = 2 OR user_id = 3').order('user_id desc').pluck(:user_id)
+      assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).or(:user_id => 3).order('user_id desc').pluck(:user_id)
+    end
   end
 #--------------------------------
 #  logic order
