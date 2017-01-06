@@ -73,7 +73,7 @@ class RailsOrTest < Minitest::Test
     assert_equal expected, User.joins(:posts).group(:user_id).having("COUNT(*) > 1").or_having("COUNT(*) = 1").to_a
   end
 #--------------------------------
-#  distinct / limit / offset
+#  distinct / limit / offset / order
 #--------------------------------
   def test_or_with_limit
     expected = Post.where('user_id = 1 OR user_id = 2').limit(4).to_a
@@ -86,6 +86,10 @@ class RailsOrTest < Minitest::Test
   def test_or_with_offset
     expected = Post.where('user_id = 1 OR user_id = 2').offset(3).first
     assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).offset(3).first
+  end
+  def test_or_with_order
+    expected = Post.where('user_id = 1 OR user_id = 2 OR user_id = 3').order('user_id desc').pluck(:user_id)
+    assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).or(:user_id => 3).order('user_id desc').pluck(:user_id)
   end
 #--------------------------------
 #  logic order
