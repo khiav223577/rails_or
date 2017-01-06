@@ -46,14 +46,20 @@ class RailsOrTest < Minitest::Test
     expected = Post.where('id = 1 or title = ?', "Kathenrie's post1").to_a
     assert_equal expected, Post.where('id = 1').or(:title => "Kathenrie's post1").to_a
   end
-  def test_or
+#--------------------------------
+#  join
+#--------------------------------
+  def test_or_with_join
     expected = User.joins(:posts).where('user_id = 1 AND (title = ? OR title = ? OR title = ?)', "John's post1", "John's post2", "John's post3").to_a
-    target = User.joins(:posts).where(0)
+    assert_equal expected, User.joins(:posts).where(0)
                                .or(:id => 1, :'posts.title' => "John's post1")
                                .or(:id => 1, :'posts.title' => "John's post2")
-                               .or(:id => 1, :'posts.title' => "John's post3")
+                               .or(:id => 1, :'posts.title' => "John's post3").to_a
+  end
+  def test_or_with_join_and_no_join
+    expected = User.joins(:posts).where('user_id = 1 AND title = ? OR user_id = 2', "John's post2").to_a
+    target = User.joins(:posts).where(:id => 1, :'posts.title' => "John's post2").or(:id => 2)
     assert_equal expected, target.to_a
-    assert_equal 1, target.to_sql.scan('"users"."id" = 1').size
   end
 #--------------------------------
 #  logic order
