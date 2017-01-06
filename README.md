@@ -45,7 +45,7 @@ User.joins(:posts).where(id: 2)
                   .or('posts.title': "title")
                   .or('posts.created_at > ?', 1.day.ago)
 ```
-Support using `Hash` / `Array` / `String` as arguments
+Support passing `Hash` / `Array` / `String` as parameters
 ```rb
 Person.where(name: 'Pearl').or(age: 24)
 Person.where(name: 'Pearl').or(['age = ?', 24])
