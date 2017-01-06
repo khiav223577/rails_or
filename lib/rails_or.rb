@@ -31,6 +31,8 @@ class ActiveRecord::Relation
   end
   def or_not(*args)
     return self.or(klass.where.not(*args))
+  def or_having(*args)
+    self.or(klass.having(*args))
   end
 private
   def parse_or_parameter(*other)
