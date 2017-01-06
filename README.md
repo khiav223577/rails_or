@@ -33,7 +33,8 @@ Person.where(:name => 'Pearl').or(Person.where(:age => 24))
 Person.where("name = ? OR age = ?", 'Pearl', 24)
 ```
 
-### Support using Hash/Array/String as arguments
+### More Easy to use 
+Support using `Hash` / `Array` / `String` as arguments
 ```rb
 Person.where(:name => 'Pearl').or(:age => 24)
 Person.where(:name => 'Pearl').or(['age = ?', 24])
