@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["khiav reoy"]
   spec.email         = ["mrtmrt15xn@yahoo.com.tw"]
 
-  spec.summary       = %q{Support and entend #or query method.}
-  spec.description   = %q{Support and entend #or query method in Rails 3, 4, 5.}
+  spec.summary       = %q{Support && Add syntax sugar to #or query method.}
+  spec.description   = %q{Support && Add syntax sugar to #or query method in Rails 3, 4, 5.}
   spec.homepage      = "https://github.com/khiav223577/rails_or"
   spec.license       = "MIT"
 
