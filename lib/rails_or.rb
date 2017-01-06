@@ -12,25 +12,19 @@ class ActiveRecord::Relation
     def or(*other)
       other        = parse_or_parameter(*other)
       combining    = group_values.any? ? :having : :where
-      %i(having where).each do |combining|
-        left_values  = send("#{combining}_values")
-        right_values = other.send("#{combining}_values")
-        common       = left_values & right_values
-        mine         = left_values - common
-        theirs       = right_values - common
-        if mine.any? && theirs.any?
-          mine.map!{|x| String === x ? Arel.sql(x) : x }
-          theirs.map!{ |x| String === x ? Arel.sql(x) : x }
-          mine = [Arel::Nodes::And.new(mine)] if mine.size > 1
-          theirs = [Arel::Nodes::And.new(theirs)] if theirs.size > 1
-          common << Arel::Nodes::Or.new(mine.first, theirs.first)
-        elsif mine.any?
-          common = left_values
-        elsif theirs.any?
-          common = right_values
-        end
-        send("#{combining}_values=", common)
+      left_values  = send("#{combining}_values")
+      right_values = other.send("#{combining}_values")
+      common       = left_values & right_values
+      mine         = left_values - common
+      theirs       = right_values - common
+      if mine.any? && theirs.any?
+        mine.map!{|x| String === x ? Arel.sql(x) : x }
+        theirs.map!{ |x| String === x ? Arel.sql(x) : x }
+        mine = [Arel::Nodes::And.new(mine)] if mine.size > 1
+        theirs = [Arel::Nodes::And.new(theirs)] if theirs.size > 1
+        common << Arel::Nodes::Or.new(mine.first, theirs.first)
       end
+      send("#{combining}_values=", common)
       self.bind_values = self.bind_values + other.bind_values
       return self  
     end
