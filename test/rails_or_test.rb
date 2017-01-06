@@ -58,8 +58,14 @@ class RailsOrTest < Minitest::Test
   end
   def test_or_with_join_and_no_join
     expected = User.joins(:posts).where('user_id = 1 AND title = ? OR user_id = 2', "John's post2").to_a
-    target = User.joins(:posts).where(:id => 1, :'posts.title' => "John's post2").or(:id => 2)
-    assert_equal expected, target.to_a
+    assert_equal expected, User.joins(:posts).where(:id => 1, :'posts.title' => "John's post2").or(:id => 2).to_a
+  end
+#--------------------------------
+#  having
+#--------------------------------
+  def test_or_with_having
+    expected = Post.group(:user_id).having("COUNT(*) = 1 OR COUNT(*) = 2").to_a
+    assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or(Post.having("COUNT(*) = 2")).to_a
   end
 #--------------------------------
 #  logic order
