@@ -29,6 +29,9 @@ class ActiveRecord::Relation
       return self  
     end
   end
+  def or_having(*args)
+    self.or(klass.having(*args))
+  end
 private
   def parse_or_parameter(*other)
     other = other.first if other.size == 1
