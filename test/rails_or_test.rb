@@ -44,7 +44,9 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
   def test_or_with_common_where
     expected = Post.where('id = 1 and (title = ? or title = ?)', "John's post1", "John's post2").to_a
-    assert_equal expected, Post.where('id = 1').where(:title => "John's post1").or(Post.where('id = 1').where(:title => "John's post2")).to_a
+    target = Post.where('id = 1').where(:title => "John's post1").or(Post.where('id = 1').where(:title => "John's post2"))
+    assert_equal expected, target.to_a
+    assert_equal 1, target.to_sql.scan('id = 1').size
   end
 #--------------------------------
 #  Multiple columns
