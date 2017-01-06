@@ -6,7 +6,7 @@
 
 # RailsOr
 
-Support and extend #or query method in Rails 3, 4, 5.
+Support / Add syntax sugar to #or query method in Rails 3, 4, 5.
 
 ## Installation
 
@@ -28,19 +28,31 @@ Or install it yourself as:
 
 ### Same as Rails 5's #or method
 ```rb
-Person.where(:name => 'Pearl').or(Person.where(:age => 24))
+Person.where(name: 'Pearl').or(Person.where(age: 24))
 # is the same as
 Person.where("name = ? OR age = ?", 'Pearl', 24)
 ```
 
 ### More Easy to use 
+No need to repeat writing `Model.joins(XXX).where(...)`
+```rb
+# before
+User.joins(:posts).where(id: 2)
+                  .or(User.joins(:posts).where('posts.title = ?',"title"))
+                  .or(User.joins(:posts).where('posts.created_at > ?', 1.day.ago))
+# after
+User.joins(:posts).where(id: 2)
+                  .or('posts.title': "title")
+                  .or('posts.created_at > ?', 1.day.ago)
+```
 Support using `Hash` / `Array` / `String` as arguments
 ```rb
-Person.where(:name => 'Pearl').or(:age => 24)
-Person.where(:name => 'Pearl').or(['age = ?', 24])
-Person.where(:name => 'Pearl').or('age = ?', 24)
-Person.where(:name => 'Pearl').or('age = 24')
+Person.where(name: 'Pearl').or(age: 24)
+Person.where(name: 'Pearl').or(['age = ?', 24])
+Person.where(name: 'Pearl').or('age = ?', 24)
+Person.where(name: 'Pearl').or('age = 24')
 ```
+
 
 
 ## Development
