@@ -49,35 +49,33 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
 #  join
 #--------------------------------
-  def test_or_with_join
-    expected = User.joins(:posts).where('user_id = 1 AND (title = ? OR title = ? OR title = ?)', "John's post1", "John's post2", "John's post3").to_a
-    assert_equal expected, User.joins(:posts).where('0')
-                               .or(:id => 1, :'posts.title' => "John's post1")
-                               .or(:id => 1, :'posts.title' => "John's post2")
-                               .or(:id => 1, :'posts.title' => "John's post3").to_a
-  end
   if Gem::Version.new(Rails::VERSION::STRING) < Gem::Version.new('5.0.0')
+    def test_or_with_join #Rails 5 doesn't support this
+      expected = User.joins(:posts).where('user_id = 1 AND (title = ? OR title = ? OR title = ?)', "John's post1", "John's post2", "John's post3").to_a
+      assert_equal expected, User.joins(:posts).where('0')
+                                 .or(:id => 1, :'posts.title' => "John's post1")
+                                 .or(:id => 1, :'posts.title' => "John's post2")
+                                 .or(:id => 1, :'posts.title' => "John's post3").to_a
+    end
     def test_or_with_join_and_no_join #Rails 5 doesn't support this
       expected = User.joins(:posts).where('user_id = 1 AND title = ? OR user_id = 2', "John's post2").to_a
       assert_equal expected, User.joins(:posts).where(:id => 1, :'posts.title' => "John's post2").or(:id => 2).to_a
     end
-  end
 #--------------------------------
 #  having
 #--------------------------------
-  def test_or_with_having
-    expected = Post.group(:user_id).having("COUNT(*) = 1 OR COUNT(*) = 2").to_a
-    assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or(Post.having("COUNT(*) = 2")).to_a
-    assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or_having("COUNT(*) = 2").to_a
-  end
-  def test_or_with_join_and_having
-    expected = User.joins(:posts).group(:user_id).having("COUNT(*) = 1 OR COUNT(*) > 1").to_a
-    assert_equal expected, User.joins(:posts).group(:user_id).having("COUNT(*) > 1").or_having("COUNT(*) = 1").to_a
-  end
+    def test_or_with_having #Rails 5 doesn't support this
+      expected = Post.group(:user_id).having("COUNT(*) = 1 OR COUNT(*) = 2").to_a
+      assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or(Post.having("COUNT(*) = 2")).to_a
+      assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or_having("COUNT(*) = 2").to_a
+    end
+    def test_or_with_join_and_having #Rails 5 doesn't support this
+      expected = User.joins(:posts).group(:user_id).having("COUNT(*) = 1 OR COUNT(*) > 1").to_a
+      assert_equal expected, User.joins(:posts).group(:user_id).having("COUNT(*) > 1").or_having("COUNT(*) = 1").to_a
+    end
 #--------------------------------
 #  uniq / limit / offset / order
 #--------------------------------
-  if Gem::Version.new(Rails::VERSION::STRING) < Gem::Version.new('5.0.0')
     def test_or_with_limit #Rails 5 doesn't support this
       expected = Post.where('user_id = 1 OR user_id = 2').limit(4).to_a
       assert_equal expected, Post.limit(4).where(:user_id => 1).or(:user_id => 2).to_a
