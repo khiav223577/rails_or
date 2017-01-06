@@ -66,6 +66,13 @@ class RailsOrTest < Minitest::Test
   def test_or_with_having
     expected = Post.group(:user_id).having("COUNT(*) = 1 OR COUNT(*) = 2").to_a
     assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or(Post.having("COUNT(*) = 2")).to_a
+    assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or_having("COUNT(*) = 2").to_a
+  end
+  def test_or_with_join_and_having
+    users = User.joins(:posts).group(:user_id)
+    expected = users.where(:'posts.user_id' => 2).having("COUNT(*) = 1 OR COUNT(*) > 1").to_a
+    assert_equal expected, users.where(:'posts.user_id' => 2).having("COUNT(*) > 1").or_having("COUNT(*) = 1").to_a
+    assert_equal expected, users.having("COUNT(*) = 1").or(User.where(:user_id => 2).having("COUNT(*) > 1")).to_a
   end
 #--------------------------------
 #  logic order
