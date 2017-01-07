@@ -7,6 +7,7 @@
 # RailsOr
 
 Support && Add syntax sugar to #or query method in Rails 3, 4, 5.
+
 Allowing use of the OR operator to combine WHERE or HAVING clauses.
 
 ## Installation
