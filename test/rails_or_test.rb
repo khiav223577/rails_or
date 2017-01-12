@@ -42,7 +42,7 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
 #  Common condition
 #--------------------------------
-  if Gem::Version.new(Rails::VERSION::STRING) < Gem::Version.new('5.0.0')
+  if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('5.0.0')
     def test_or_with_common_where #Rails 5 doesn't support this
       expected = Post.where('id = 1 and (title = ? or title = ?)', "John's post1", "John's post2").to_a
       target = Post.where('id = 1').where(:title => "John's post1").or(Post.where('id = 1').where(:title => "John's post2"))
@@ -60,7 +60,7 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
 #  join
 #--------------------------------
-  if Gem::Version.new(Rails::VERSION::STRING) < Gem::Version.new('5.0.0')
+  if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('5.0.0')
     def test_or_with_join #Rails 5 doesn't support this
       expected = User.joins(:posts).where('user_id = 1 AND (title = ? OR title = ? OR title = ?)', "John's post1", "John's post2", "John's post3").to_a
       assert_equal expected, User.joins(:posts).where('0')
@@ -116,7 +116,7 @@ class RailsOrTest < Minitest::Test
     expected = Post.where('(user_id = ? OR user_id = ?) AND title LIKE ?', 1, 2, "John's %").to_a
     assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).where('title LIKE ?', "John's %").to_a
   end
-  if Gem::Version.new(Rails::VERSION::STRING) > Gem::Version.new('4.0.2')
+  if Gem::Version.new(ActiveRecord::VERSION::STRING) > Gem::Version.new('4.0.2')
     def test_A_and_not_B_or_C #(A && !B) || C, C || (!B && A)
       expected = Post.where('(user_id = ? AND NOT title = ?) OR user_id = ?', 1, "John's post1", 2).to_a
       assert_equal expected, Post.where(:user_id => 1).where.not(:title => "John's post1").or(:user_id => 2).to_a
