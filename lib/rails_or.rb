@@ -1,5 +1,4 @@
 require "rails_or/version"
-require 'rails'
 require 'active_record'
 
 class ActiveRecord::Relation
@@ -29,7 +28,7 @@ class ActiveRecord::Relation
       return self  
     end
   end
-  if Gem::Version.new(Rails::VERSION::STRING) < Gem::Version.new('4.0.0')
+  if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
     def or_not(*args)
       raise 'This method is not support in Rails 3'
     end
