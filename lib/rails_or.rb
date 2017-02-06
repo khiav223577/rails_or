@@ -5,11 +5,11 @@ class ActiveRecord::Relation
   if method_defined?(:or)
     alias rails5_or or
     def or(*other)
-      return rails5_or(parse_or_parameter(*other))
+      return rails5_or(rails_or_parse_parameter(*other))
     end
   else
     def or(*other)
-      other        = parse_or_parameter(*other)
+      other        = rails_or_parse_parameter(*other)
       combining    = group_values.any? ? :having : :where
       left_values  = send("#{combining}_values")
       right_values = other.send("#{combining}_values")
@@ -23,8 +23,7 @@ class ActiveRecord::Relation
         theirs = [Arel::Nodes::And.new(theirs)] if theirs.size > 1
         common << Arel::Nodes::Or.new(mine.first, theirs.first)
       end
-      #ref: https://github.com/rails/rails/blob/17ef58db1776a795c9f9e31a1634db7bcdc3ecdf/activerecord/lib/active_record/scoping/named.rb#L26
-      relation = self.all #clone current_scope 
+      relation = rails_or_get_current_scope
       relation.send("#{combining}_values=", common)
       relation.bind_values = self.bind_values + other.bind_values
       return relation  
@@ -43,7 +42,7 @@ class ActiveRecord::Relation
     self.or(klass.having(*args))
   end
 private
-  def parse_or_parameter(*other)
+  def rails_or_parse_parameter(*other)
     other = other.first if other.size == 1
     case other
     when Hash   ; klass.where(other)
@@ -51,6 +50,11 @@ private
     when String ; klass.where(other)
     else        ; other
     end
+  end
+  RAILS_OR_GET_CURRENT_SCOPE_METHOD = (Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0') ? :clone : :all)
+  def rails_or_get_current_scope
+    #ref: https://github.com/rails/rails/blob/17ef58db1776a795c9f9e31a1634db7bcdc3ecdf/activerecord/lib/active_record/scoping/named.rb#L26
+    return self.send(RAILS_OR_GET_CURRENT_SCOPE_METHOD)
   end
 end
 class ActiveRecord::Base
