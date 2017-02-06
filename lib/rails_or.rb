@@ -23,9 +23,10 @@ class ActiveRecord::Relation
         theirs = [Arel::Nodes::And.new(theirs)] if theirs.size > 1
         common << Arel::Nodes::Or.new(mine.first, theirs.first)
       end
-      send("#{combining}_values=", common)
-      self.bind_values = self.bind_values + other.bind_values
-      return self  
+      relation = current_scope.clone
+      relation.send("#{combining}_values=", common)
+      relation.bind_values = self.bind_values + other.bind_values
+      return relation  
     end
   end
   if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
