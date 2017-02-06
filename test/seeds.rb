@@ -10,13 +10,23 @@ ActiveRecord::Schema.define do
     t.integer :user_id
     t.string :title
   end
+  create_table :user_messages, :force => true do |t|
+    t.integer :sender_user_id
+    t.integer :receiver_user_id
+    t.string :content
+  end
 end
 class User < ActiveRecord::Base
   serialize :serialized_attribute, Hash
   has_many :posts
+  has_many :sent_messages,     :class_name => "UserMessage", :foreign_key => :sender_user_id,   :dependent => :destroy
+  has_many :received_messages, :class_name => "UserMessage", :foreign_key => :receiver_user_id, :dependent => :destroy
 end
 class Post < ActiveRecord::Base
   belongs_to :user
+end
+class UserMessage < ActiveRecord::Base
+  
 end
 users = User.create([
   {:name => 'John', :email => 'john@example.com'},
@@ -30,4 +40,10 @@ Post.create([
   {:title => "Pearl's post1", :user_id => users[1].id},
   {:title => "Pearl's post2", :user_id => users[1].id},
   {:title => "Kathenrie's post1", :user_id => users[2].id},
+])
+UserMessage.create([
+  {:sender_user_id => users[0].id, :receiver_user_id => users[1].id, :content => 'user1 send to user2'},
+  {:sender_user_id => users[0].id, :receiver_user_id => users[2].id, :content => 'user1 send to user3'},
+  {:sender_user_id => users[1].id, :receiver_user_id => users[2].id, :content => 'user2 send to user3'},
+  {:sender_user_id => users[2].id, :receiver_user_id => users[0].id, :content => 'user3 send to user1'},
 ])

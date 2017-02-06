@@ -133,6 +133,12 @@ class RailsOrTest < Minitest::Test
     end
   end
 #--------------------------------
+#  Association test
+#--------------------------------
+  def test_two_has_many_result #model.others1 || model.others2
+
+  end
+#--------------------------------
 #  From Rails 5
 #--------------------------------
   def test_or_with_relation
