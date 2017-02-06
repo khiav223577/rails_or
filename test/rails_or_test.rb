@@ -136,7 +136,12 @@ class RailsOrTest < Minitest::Test
 #  Association test
 #--------------------------------
   def test_two_has_many_result #model.others1 || model.others2
-
+    user = User.where(:name => 'John').first
+    assert_equal user.sent_messages.or(user.received_messages).pluck(:content), [
+      "user1 send to user2", 
+      "user1 send to user3", 
+      "user3 send to user1",
+    ]
   end
 #--------------------------------
 #  From Rails 5
