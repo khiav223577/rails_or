@@ -23,7 +23,8 @@ class ActiveRecord::Relation
         theirs = [Arel::Nodes::And.new(theirs)] if theirs.size > 1
         common << Arel::Nodes::Or.new(mine.first, theirs.first)
       end
-      relation = current_scope.clone
+      #ref: https://github.com/rails/rails/blob/17ef58db1776a795c9f9e31a1634db7bcdc3ecdf/activerecord/lib/active_record/scoping/named.rb#L26
+      relation = self.all #clone current_scope 
       relation.send("#{combining}_values=", common)
       relation.bind_values = self.bind_values + other.bind_values
       return relation  
