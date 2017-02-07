@@ -143,6 +143,14 @@ class RailsOrTest < Minitest::Test
       "user3 send to user1",
     ]
   end
+  def test_two_scope
+    u1 = User.where(:name => 'John').first
+    u2 = User.where(:name => 'Pearl').first
+    assert_equal u1.posts.with_title_like('%post1').or(u2.posts.with_title_like('%post2')).pluck(:title), [
+      "John's post1", 
+      "Pearl's post2",
+    ]
+  end
 #--------------------------------
 #  From Rails 5
 #--------------------------------
