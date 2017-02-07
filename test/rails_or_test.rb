@@ -144,6 +144,35 @@ class RailsOrTest < Minitest::Test
     ]
   end
 #--------------------------------
+#  Scope test
+#--------------------------------
+  def test_two_scope
+    u1 = User.where(:name => 'John').first
+    u2 = User.where(:name => 'Pearl').first
+    assert_equal u1.posts.or(u2.posts).pluck(:title), [
+      "John's post1", 
+      "John's post2", 
+      "John's post3", 
+      "Pearl's post1",
+      "Pearl's post2",
+    ]
+    assert_equal u1.posts.with_title_like('%post1').or(u2.posts.with_title_like('%post2')).pluck(:title), [
+      "John's post1", 
+      "Pearl's post2",
+    ]
+    assert_equal u1.posts.or(u2.posts.with_title_like('%post1')).pluck(:title), [
+      "John's post1", 
+      "John's post2", 
+      "John's post3", 
+      "Pearl's post1",
+    ]
+    assert_equal u1.posts.with_title_like('%post1').or(u2.posts).pluck(:title), [
+      "John's post1", 
+      "Pearl's post1",
+      "Pearl's post2",
+    ]
+  end
+#--------------------------------
 #  From Rails 5
 #--------------------------------
   def test_or_with_relation

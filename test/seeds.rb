@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
 end
 class Post < ActiveRecord::Base
   belongs_to :user
+  scope :with_title_like, proc{|s| where('title LIKE ?', s) }
 end
 class UserMessage < ActiveRecord::Base
   
