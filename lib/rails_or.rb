@@ -29,14 +29,9 @@ class ActiveRecord::Relation
       return relation  
     end
   end
-  if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
-    def or_not(*args)
-      raise 'This method is not support in Rails 3'
-    end
-  else
-    def or_not(*args)
-      return self.or(klass.where.not(*args))
-    end
+  def or_not(*args)
+    raise 'This method is not support in Rails 3' if ActiveRecord::VERSION::MAJOR < 4
+    return self.or(klass.where.not(*args))
   end
   def or_having(*args)
     self.or(klass.having(*args))
