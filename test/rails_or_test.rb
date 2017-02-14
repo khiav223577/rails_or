@@ -192,4 +192,15 @@ class RailsOrTest < Minitest::Test
     expected = Post.all.to_a
     assert_equal expected, Post.where('id = 1').or(Post.where('')).to_a
   end
+#--------------------------------
+#  test other gem
+#--------------------------------
+  def test_if_method_all_return_array #EX: gem activerecord-deprecated_finders will change #all in Rails 4
+    expected = Post.where('id = 1 or id = 2').to_a
+    p1 = Post.where(:id => 1)
+    p2 = Post.where(:id => 2)
+    def p1.all ; super.to_a ; end
+    def p2.all ; super.to_a ; end
+    assert_equal expected, p1.or(p2).to_a
+  end
 end

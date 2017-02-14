@@ -2,6 +2,7 @@ require "rails_or/version"
 require 'active_record'
 
 class ActiveRecord::Relation
+  IS_RAILS3_FLAG = Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
   if method_defined?(:or)
     alias rails5_or or
     def or(*other)
@@ -29,14 +30,9 @@ class ActiveRecord::Relation
       return relation  
     end
   end
-  if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
-    def or_not(*args)
-      raise 'This method is not support in Rails 3'
-    end
-  else
-    def or_not(*args)
-      return self.or(klass.where.not(*args))
-    end
+  def or_not(*args)
+    raise 'This method is not support in Rails 3' if IS_RAILS3_FLAG
+    return self.or(klass.where.not(*args))
   end
   def or_having(*args)
     self.or(klass.having(*args))
@@ -51,10 +47,11 @@ private
     else        ; other
     end
   end
-  RAILS_OR_GET_CURRENT_SCOPE_METHOD = (Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0') ? :clone : :all)
   def rails_or_get_current_scope
+    return self.clone if IS_RAILS3_FLAG
     #ref: https://github.com/rails/rails/blob/17ef58db1776a795c9f9e31a1634db7bcdc3ecdf/activerecord/lib/active_record/scoping/named.rb#L26
-    return self.send(RAILS_OR_GET_CURRENT_SCOPE_METHOD)
+    #return self.all # <- cannot use this because some gem changes this method's behavior
+    return (self.current_scope || self.default_scoped).clone
   end
 end
 class ActiveRecord::Base
