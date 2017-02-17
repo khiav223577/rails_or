@@ -3,14 +3,13 @@ rvm:
   - 2.2
   - 2.3
   - 2.4
-
+sudo: required
+dist: trusty
 before_install: gem install bundler -v 1.11.2
-
 gemfile:
   - gemfiles/3.2.gemfile
   - gemfiles/4.2.gemfile
   - gemfiles/5.0.gemfile
-
 addons:
     code_climate:
         repo_token: 4be4fd5792acf886a179e8ebff97d155dc19858816d7179f2bf5002bae874818
