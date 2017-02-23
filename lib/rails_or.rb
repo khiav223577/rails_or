@@ -18,8 +18,8 @@ class ActiveRecord::Relation
       mine         = left_values - common
       theirs       = right_values - common
       if mine.any? && theirs.any?
-        mine.map!{|x| String === x ? Arel.sql(x) : x }
-        theirs.map!{ |x| String === x ? Arel.sql(x) : x }
+        mine.map!{|x| rails_or_wrap_arel(x) }
+        theirs.map!{|x| rails_or_wrap_arel(x) }
         mine = [Arel::Nodes::And.new(mine)] if mine.size > 1
         theirs = [Arel::Nodes::And.new(theirs)] if theirs.size > 1
         common << Arel::Nodes::Or.new(mine.first, theirs.first)
@@ -38,6 +38,9 @@ class ActiveRecord::Relation
     self.or(klass.having(*args))
   end
 private
+  def rails_or_wrap_arel(node)
+    return Arel::Nodes::Grouping.new(String === node ? Arel.sql(node) : node)
+  end
   def rails_or_parse_parameter(*other)
     other = other.first if other.size == 1
     case other
