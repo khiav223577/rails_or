@@ -50,6 +50,11 @@ class RailsOrTest < Minitest::Test
       assert_equal 1, target.to_sql.scan('id = 1').size
     end
   end
+  def test_or_with_unneeded_brackets
+    #Wrong: SELECT "users".* FROM "users"  WHERE (("users"."id" = 1) OR ("users"."id" = 2))
+    #Correct: SELECT "users".* FROM "users"  WHERE ("users"."id" = 1 OR "users"."id" = 2)
+    assert_equal 1, User.where(:id => 1).or(:id => 2).to_sql.count('(')
+  end
 #--------------------------------
 #  Multiple columns
 #--------------------------------
@@ -133,6 +138,14 @@ class RailsOrTest < Minitest::Test
     end
   end
 #--------------------------------
+#  Nested
+#--------------------------------
+  def test_nested_or #(A && (B || C)) || D
+    expected = Post.where('(title like ?) AND (start_time IS NULL OR start_time > ?) OR (title = ?)', 'John%', Time.parse('2016/1/15'), "Pearl's post1").pluck(:title)
+    p1 = Post.with_title_like('John%').where('start_time IS NULL OR start_time > ?', Time.parse('2016/1/15'))
+    assert_equal expected, p1.or(:title => "Pearl's post1").pluck(:title)
+  end
+#--------------------------------
 #  Association test
 #--------------------------------
   def test_two_has_many_result #model.others1 || model.others2
@@ -203,12 +216,8 @@ class RailsOrTest < Minitest::Test
     def p2.all ; super.to_a ; end
     assert_equal expected, p1.or(p2).to_a
   end
-#--------------------------------
-#  test nested
-#--------------------------------
-  def test_nested_or #(A && (B || C)) || D
-    expected = Post.where('(title like ?) AND (start_time IS NULL OR start_time > ?) OR (title = ?)', 'John%', Time.parse('2016/1/15'), "Pearl's post1").to_a
-    p1 = Post.with_title_like('John%').where('start_time IS NULL OR start_time > ?', Time.parse('2016/1/15'))
-    assert_equal expected, p1.or(:title => "Pearl's post1").to_a
-  end
 end
+
+
+
+
