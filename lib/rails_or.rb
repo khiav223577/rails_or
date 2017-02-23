@@ -36,8 +36,7 @@ class ActiveRecord::Relation
 private
   def rails_or_values_to_arel(values)
     values.map!{|x| rails_or_wrap_arel(x) }
-    values = [Arel::Nodes::And.new(values)] if values.size > 1
-    return values.first
+    return (values.size > 1 ? Arel::Nodes::And.new(values) : values)
   end
   def rails_or_wrap_arel(node)
     return node if Arel::Nodes::Equality === node
