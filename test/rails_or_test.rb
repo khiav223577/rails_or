@@ -217,7 +217,3 @@ class RailsOrTest < Minitest::Test
     assert_equal expected, p1.or(p2).to_a
   end
 end
-
-
-
-
