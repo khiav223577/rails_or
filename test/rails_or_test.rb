@@ -50,6 +50,11 @@ class RailsOrTest < Minitest::Test
       assert_equal 1, target.to_sql.scan('id = 1').size
     end
   end
+  def test_or_with_unneeded_brackets
+    #Wrong: SELECT "users".* FROM "users"  WHERE (("users"."id" = 1) OR ("users"."id" = 2))
+    #Correct: SELECT "users".* FROM "users"  WHERE ("users"."id" = 1 OR "users"."id" = 2)
+    assert_equal 1, User.where(:id => 1).or(:id => 2).to_sql.count('(')
+  end
 #--------------------------------
 #  Multiple columns
 #--------------------------------
@@ -131,6 +136,14 @@ class RailsOrTest < Minitest::Test
       assert_equal expected, Post.where('title LIKE ?', "Kathenrie's %").where.not(:user_id => 1).or_not('title LIKE ?', "Pearl's %").to_a
       assert_equal expected, Post.where.not('title LIKE ?', "Pearl's %").or(Post.where.not(:user_id => 1).where('title LIKE ?', "Kathenrie's %")).to_a
     end
+  end
+#--------------------------------
+#  Nested
+#--------------------------------
+  def test_nested_or #(A && (B || C)) || D
+    expected = Post.where('(title like ?) AND (start_time IS NULL OR start_time > ?) OR (title = ?)', 'John%', Time.parse('2016/1/15'), "Pearl's post1").pluck(:title)
+    p1 = Post.with_title_like('John%').where('start_time IS NULL OR start_time > ?', Time.parse('2016/1/15'))
+    assert_equal expected, p1.or(:title => "Pearl's post1").pluck(:title)
   end
 #--------------------------------
 #  Association test

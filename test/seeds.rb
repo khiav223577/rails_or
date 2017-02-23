@@ -9,6 +9,7 @@ ActiveRecord::Schema.define do
   create_table :posts, :force => true do |t|
     t.integer :user_id
     t.string :title
+    t.datetime :start_time
   end
   create_table :user_messages, :force => true do |t|
     t.integer :sender_user_id
@@ -35,12 +36,12 @@ users = User.create([
   {:name => 'Kathenrie', :email => 'kathenrie@example.com'},
 ])
 Post.create([
-  {:title => "John's post1", :user_id => users[0].id},
-  {:title => "John's post2", :user_id => users[0].id},
+  {:title => "John's post1", :user_id => users[0].id, :start_time => Time.parse('2016/1/1')},
+  {:title => "John's post2", :user_id => users[0].id, :start_time => Time.parse('2016/2/1')},
   {:title => "John's post3", :user_id => users[0].id},
   {:title => "Pearl's post1", :user_id => users[1].id},
   {:title => "Pearl's post2", :user_id => users[1].id},
-  {:title => "Kathenrie's post1", :user_id => users[2].id},
+  {:title => "Kathenrie's post1", :user_id => users[2].id, :start_time => Time.parse('2016/10/15')},
 ])
 UserMessage.create([
   {:sender_user_id => users[0].id, :receiver_user_id => users[1].id, :content => 'user1 send to user2'},
