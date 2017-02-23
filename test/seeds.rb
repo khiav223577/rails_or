@@ -41,7 +41,7 @@ Post.create([
   {:title => "John's post3", :user_id => users[0].id},
   {:title => "Pearl's post1", :user_id => users[1].id},
   {:title => "Pearl's post2", :user_id => users[1].id},
-  {:title => "Kathenrie's post1", :user_id => users[2].id},
+  {:title => "Kathenrie's post1", :user_id => users[2].id, :start_time => Time.parse('2016/10/15')},
 ])
 UserMessage.create([
   {:sender_user_id => users[0].id, :receiver_user_id => users[1].id, :content => 'user1 send to user2'},
