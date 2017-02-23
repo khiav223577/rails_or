@@ -203,4 +203,12 @@ class RailsOrTest < Minitest::Test
     def p2.all ; super.to_a ; end
     assert_equal expected, p1.or(p2).to_a
   end
+#--------------------------------
+#  test nested
+#--------------------------------
+  def test_nested_or #(A && (B || C)) || D
+    expected = Post.where('(title like ?) AND (start_time IS NULL OR start_time > ?) OR (title = ?)', 'John%', Time.parse('2016/1/15'), "Pearl's post1").to_a
+    p1 = Post.with_title_like('John%').where('start_time IS NULL OR start_time > ?', Time.parse('2016/1/15'))
+    assert_equal expected, p1.or(:title => "Pearl's post1").to_a
+  end
 end
