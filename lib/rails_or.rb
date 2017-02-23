@@ -39,6 +39,7 @@ class ActiveRecord::Relation
   end
 private
   def rails_or_wrap_arel(node)
+    return node if Arel::Nodes::Equality === node
     return Arel::Nodes::Grouping.new(String === node ? Arel.sql(node) : node)
   end
   def rails_or_parse_parameter(*other)
