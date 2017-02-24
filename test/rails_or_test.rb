@@ -140,9 +140,12 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
 #  Nested
 #--------------------------------
-  def test_nested_or #(A && (B || C)) || D
+  def test_nested_or #(A && (B || C)) || D, ((B || C) && A) || D
     expected = Post.where('(title like ?) AND (start_time IS NULL OR start_time > ?) OR (title = ?)', 'John%', Time.parse('2016/1/15'), "Pearl's post1").pluck(:title)
     p1 = Post.with_title_like('John%').where('start_time IS NULL OR start_time > ?', Time.parse('2016/1/15'))
+    assert_equal expected, p1.or(:title => "Pearl's post1").pluck(:title)
+
+    p1 = Post.where(:start_time => nil).or('start_time > ?', Time.parse('2016/1/15')).with_title_like('John%')
     assert_equal expected, p1.or(:title => "Pearl's post1").pluck(:title)
   end
 #--------------------------------
