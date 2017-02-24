@@ -1,7 +1,8 @@
 # Change Log
 
 ## [Unreleased]
-
+### Fixed
+- 
 
 ## [1.1.3] - 2017-02-23
 ### Fixed
@@ -28,7 +29,7 @@
 ### Added
 - Support using Hash/Array/String as arguments [[#2](https://github.com/khiav223577/rails_or/pull/2)] @khiav223577
 
-## [0.0.1] - 2016-12-28
+## 0.0.1 - 2016-12-28
 ### Added
 - Add #or method [[#1](https://github.com/khiav223577/rails_or/pull/1)] @khiav223577
 
