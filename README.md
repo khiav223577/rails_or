@@ -1,14 +1,22 @@
+# RailsOr
+
 [![Gem Version](https://img.shields.io/gem/v/rails_or.svg?style=flat)](https://rubygems.org/gems/rails_or)
 [![Build Status](https://travis-ci.org/khiav223577/rails_or.svg?branch=master)](https://travis-ci.org/khiav223577/rails_or)
 [![RubyGems](http://img.shields.io/gem/dt/rails_or.svg?style=flat)](https://rubygems.org/gems/rails_or)
 [![Code Climate](https://codeclimate.com/github/khiav223577/rails_or/badges/gpa.svg)](https://codeclimate.com/github/khiav223577/rails_or)
 [![Test Coverage](https://codeclimate.com/github/khiav223577/rails_or/badges/coverage.svg)](https://codeclimate.com/github/khiav223577/rails_or/coverage)
 
-# RailsOr
+`rails_or` is a Ruby Gem for adding the `#or` method in Rails 3+,
 
-Support && Add syntax sugar to #or query method in Rails 3, 4, 5.
+allowing use of the OR operator to combine WHERE or HAVING clauses. 
 
-Allowing use of the OR operator to combine WHERE or HAVING clauses.
+Though this method is available in Rails 5+, 
+
+`rails_or` make it easier to use by adding syntax sugar to `#or` method.
+
+
+
+
 
 ## Installation
 
