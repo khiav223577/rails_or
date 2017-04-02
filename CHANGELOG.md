@@ -4,6 +4,12 @@
 - No changes.
 <br><br>
 
+### RailsOr [1.1.4] - (April 1, 2017)
+
+- Add more assertions for nested or. [[#17](https://github.com/khiav223577/rails_or/pull/17)] @khiav223577
+- Restrict dependency to activerecord. [[#18](https://github.com/khiav223577/rails_or/pull/18)] @khiav223577
+<br><br>
+
 ### RailsOr [1.1.3] - (February 23, 2017)
 
 - Fixed nested or broken. [[#16](https://github.com/khiav223577/rails_or/pull/16)] @khiav223577
@@ -40,7 +46,8 @@
 - Add #or method [[#1](https://github.com/khiav223577/rails_or/pull/1)] @khiav223577
 <br><br>
 
-[Unreleased]: https://github.com/khiav223577/rails_or/compare/v1.1.3...HEAD
+[Unreleased]: https://github.com/khiav223577/rails_or/compare/v1.1.4...HEAD
+[1.1.3]: https://github.com/khiav223577/rails_or/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/khiav223577/rails_or/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/khiav223577/rails_or/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/khiav223577/rails_or/compare/v1.1.0...v1.1.1
