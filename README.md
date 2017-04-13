@@ -63,7 +63,24 @@ Person.where(name: 'Pearl').or('age = ?', 24)
 Person.where(name: 'Pearl').or('age = 24')
 ```
 
+### Other convenient methods
 
+#### or_not
+(Only supports in Rails 4+)
+```rb
+Company.where.not(logo_image1: nil)
+       .or_not(logo_image2: nil)
+       .or_not(logo_image3: nil)
+       .or_not(logo_image4: nil)
+```
+
+#### or_having
+
+```rb
+Order.group('user_id')
+     .having('SUM(price) > 1000')
+     .or_having('COUNT(*) > 10')
+```
 
 ## Development
 
