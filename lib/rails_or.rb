@@ -15,8 +15,10 @@ class ActiveRecord::Relation
       left_values  = send("#{combining}_values")
       right_values = other.send("#{combining}_values")
       common       = left_values & right_values
-      mine_where, mine_binds, common_bind_values     = rails_or_except_binds(left_values , common, self.bind_values)
-      theirs_where, theirs_binds, common_bind_values = rails_or_except_binds(right_values, common, other.bind_values)
+      
+      mine_where, mine_binds = rails_or_extract_where_values(left_values, self.bind_values){|node| !common.include?(node) }
+      theirs_where, theirs_binds = rails_or_extract_where_values(right_values, other.bind_values){|node| !common.include?(node) }
+      _, common_binds = rails_or_extract_where_values(right_values, other.bind_values){|node| common.include?(node) }
 
       if mine_where.any? && theirs_where.any?
         common << Arel::Nodes::Or.new(rails_or_values_to_arel(mine_where), rails_or_values_to_arel(theirs_where))
@@ -24,7 +26,7 @@ class ActiveRecord::Relation
 
       relation = rails_or_get_current_scope
       relation.send("#{combining}_values=", common)
-      relation.bind_values = common_bind_values + mine_binds + theirs_binds
+      relation.bind_values = common_binds + mine_binds + theirs_binds
       return relation  
     end
   end
@@ -36,22 +38,20 @@ class ActiveRecord::Relation
     self.or(klass.having(*args))
   end
 private
-  def rails_or_except_binds(where_values, except_where_values, bind_values) 
+  def rails_or_extract_where_values(where_values, bind_values) 
     binds_index = 0
-    common_bind_values = []
     new_bind_values = []
-    new_where_values = where_values.reject do |node|
-      except = except_where_values.include?(node)
+    new_where_values = where_values.select do |node|
+      flag = yield(node)
       if not node.is_a?(String)
         binds_contains = node.grep(Arel::Nodes::BindParam).size
-        (binds_index...(binds_index + binds_contains)).each do |i| 
-          (except ? common_bind_values : new_bind_values) << bind_values[i]
-        end
+        pre_binds_index = binds_index
         binds_index += binds_contains
+        (pre_binds_index...binds_index).each{|i| new_bind_values << bind_values[i] } if flag
       end
-      next except
+      next flag
     end
-    return [new_where_values, new_bind_values, common_bind_values]
+    return [new_where_values, new_bind_values]
   end
   def rails_or_values_to_arel(values)
     values.map!{|x| rails_or_wrap_arel(x) }
