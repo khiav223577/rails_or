@@ -15,14 +15,16 @@ class ActiveRecord::Relation
       left_values  = send("#{combining}_values")
       right_values = other.send("#{combining}_values")
       common       = left_values & right_values
-      mine         = left_values - common
-      theirs       = right_values - common
-      if mine.any? && theirs.any?
-        common << Arel::Nodes::Or.new(rails_or_values_to_arel(mine), rails_or_values_to_arel(theirs))
+
+      mine_where, mine_binds = rails_or_except_binds(left_values, common, self.bind_values)
+      theirs_where, theirs_binds = rails_or_except_binds(right_values, common, other.bind_values)
+      if mine_where.any? && theirs_where.any?
+        common << Arel::Nodes::Or.new(rails_or_values_to_arel(mine_where), rails_or_values_to_arel(theirs_where))
       end
+
       relation = rails_or_get_current_scope
       relation.send("#{combining}_values=", common)
-      relation.bind_values = self.bind_values + other.bind_values
+      relation.bind_values = mine_binds + theirs_binds
       return relation  
     end
   end
