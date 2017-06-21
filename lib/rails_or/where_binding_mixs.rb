@@ -1,15 +1,25 @@
 class RailsOr::WhereBindingMixs
   attr_reader :where_values
   attr_reader :bind_values
+
   def initialize(where_values, bind_values)
     @where_values = where_values
     @bind_values = bind_values
   end
-  def merge!(other)
-    @where_values += other.where_values
-    @bind_values += other.bind_values
-    return self
+
+  def +(other)
+    self.class.new(@where_values + other.where_values, @bind_values + other.bind_values)
   end
+
+  def -(other)
+    self.select{|node| !other.where_values.include?(node) }
+  end
+
+  def &(other)
+    common_where_values = @where_values & other.where_values
+    return self.select{|node| common_where_values.include?(node) }
+  end
+
   def select
     binds_index = 0
     new_bind_values = []

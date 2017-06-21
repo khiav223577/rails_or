@@ -15,18 +15,17 @@ class ActiveRecord::Relation
       combining    = group_values.any? ? :having : :where
       left  = RailsOr::WhereBindingMixs.new(self.send("#{combining}_values"), self.bind_values)
       right = RailsOr::WhereBindingMixs.new(other.send("#{combining}_values"), other.bind_values)
-      common_where_values = left.where_values & right.where_values
-      
-      common = RailsOr::WhereBindingMixs.new(common_where_values, right.select{|node| common_where_values.include?(node) }.bind_values)
-      left  = left.select{|node| !common_where_values.include?(node) }
-      right = right.select{|node| !common_where_values.include?(node) }
+      common = left & right
+
+      left  -= common
+      right -= common
       
       if left.where_values.any? && right.where_values.any?
         arel_or = Arel::Nodes::Or.new(
           rails_or_values_to_arel(left.where_values),
           rails_or_values_to_arel(right.where_values),
         )
-        common.merge!(RailsOr::WhereBindingMixs.new([arel_or], left.bind_values + right.bind_values))
+        common += RailsOr::WhereBindingMixs.new([arel_or], left.bind_values + right.bind_values)
       end
 
       relation = rails_or_get_current_scope
