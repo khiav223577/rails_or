@@ -15,16 +15,16 @@ class ActiveRecord::Relation
       left_values  = send("#{combining}_values")
       right_values = other.send("#{combining}_values")
       common       = left_values & right_values
+      mine_where, mine_binds, common_bind_values     = rails_or_except_binds(left_values , common, self.bind_values)
+      theirs_where, theirs_binds, common_bind_values = rails_or_except_binds(right_values, common, other.bind_values)
 
-      mine_where, mine_binds = rails_or_except_binds(left_values, common, self.bind_values)
-      theirs_where, theirs_binds = rails_or_except_binds(right_values, common, other.bind_values)
       if mine_where.any? && theirs_where.any?
         common << Arel::Nodes::Or.new(rails_or_values_to_arel(mine_where), rails_or_values_to_arel(theirs_where))
       end
 
       relation = rails_or_get_current_scope
       relation.send("#{combining}_values=", common)
-      relation.bind_values = mine_binds + theirs_binds
+      relation.bind_values = common_bind_values + mine_binds + theirs_binds
       return relation  
     end
   end
@@ -38,19 +38,20 @@ class ActiveRecord::Relation
 private
   def rails_or_except_binds(where_values, except_where_values, bind_values) 
     binds_index = 0
+    common_bind_values = []
     new_bind_values = []
     new_where_values = where_values.reject do |node|
       except = except_where_values.include?(node)
       if not node.is_a?(String)
         binds_contains = node.grep(Arel::Nodes::BindParam).size
         (binds_index...(binds_index + binds_contains)).each do |i| 
-          new_bind_values[i] = bind_values[i] if not except
+          (except ? common_bind_values : new_bind_values) << bind_values[i]
         end
         binds_index += binds_contains
       end
       next except
     end
-    return [new_where_values, new_bind_values.compact]
+    return [new_where_values, new_bind_values, common_bind_values]
   end
   def rails_or_values_to_arel(values)
     values.map!{|x| rails_or_wrap_arel(x) }
