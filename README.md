@@ -63,9 +63,9 @@ Person.where(name: 'Pearl').or('age = ?', 24)
 Person.where(name: 'Pearl').or('age = 24')
 ```
 
-### Other convenient methods
+## Other convenient methods
 
-#### or_not
+### or_not
 (Only supports in Rails 4+)
 ```rb
 Company.where.not(logo_image1: nil)
@@ -74,12 +74,46 @@ Company.where.not(logo_image1: nil)
        .or_not(logo_image4: nil)
 ```
 
-#### or_having
+### or_having
 
 ```rb
 Order.group('user_id')
      .having('SUM(price) > 1000')
      .or_having('COUNT(*) > 10')
+```
+
+## Examples
+
+Let `A = {id: 1}`, `B = {account: 'a'}`, and `C = {email: 'b'}`
+
+### A && (B || C)
+```rb
+u = User.where(A)
+u.where(B).or(u.where(C))
+# =>
+# SELECT `users`.* FROM `users` 
+# WHERE `users`.`id` = 1 AND (`users`.`account` = 'a' OR `users`.`email` = 'b')
+```
+### (B || C) && A
+```rb
+User.where(B).or(C).where(A)
+# =>
+# SELECT `users`.* FROM `users` 
+# WHERE (`users`.`account` = 'a' OR `users`.`email` = 'b') AND `users`.`id` = 1
+```
+### A && B || A && C
+```rb
+User.where(A).where(B).or(User.where(A).where(C))
+# =>
+# SELECT `users`.* FROM `users` 
+# WHERE (`users`.`id` = 1 AND `users`.`account` = 'a' OR `users`.`id` = 1 AND `users`.`email` = 'b')
+```
+### A && B || C
+```rb
+User.where(A).where(B).or(C)
+# =>
+# SELECT `users`.* FROM `users` 
+# WHERE (`users`.`id` = 1 AND `users`.`account` = 'a' OR `users`.`email` = 'b')
 ```
 
 ## Development
