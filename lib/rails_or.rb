@@ -12,21 +12,25 @@ class ActiveRecord::Relation
     def or(*other)
       other        = rails_or_parse_parameter(*other)
       combining    = group_values.any? ? :having : :where
-      left_values  = send("#{combining}_values")
-      right_values = other.send("#{combining}_values")
-      common       = left_values & right_values
+      left  = RailsOrWhereBindingMix.new(self.send("#{combining}_values"), self.bind_values)
+      right = RailsOrWhereBindingMix.new(other.send("#{combining}_values"), other.bind_values)
+      common_where_values = left.where_values & right.where_values
       
-      mine_where, mine_binds = rails_or_extract_where_values(left_values, self.bind_values){|node| !common.include?(node) }
-      theirs_where, theirs_binds = rails_or_extract_where_values(right_values, other.bind_values){|node| !common.include?(node) }
-      _, common_binds = rails_or_extract_where_values(right_values, other.bind_values){|node| common.include?(node) }
-
-      if mine_where.any? && theirs_where.any?
-        common << Arel::Nodes::Or.new(rails_or_values_to_arel(mine_where), rails_or_values_to_arel(theirs_where))
+      common = RailsOrWhereBindingMix.new(common_where_values, right.select{|node| common_where_values.include?(node) }.bind_values)
+      left  = left.select{|node| !common_where_values.include?(node) }
+      right = right.select{|node| !common_where_values.include?(node) }
+      
+      if left.where_values.any? && right.where_values.any?
+        arel_or = Arel::Nodes::Or.new(
+          rails_or_values_to_arel(left.where_values),
+          rails_or_values_to_arel(right.where_values),
+        )
+        common.merge!(RailsOrWhereBindingMix.new([arel_or], left.bind_values + right.bind_values))
       end
 
       relation = rails_or_get_current_scope
-      relation.send("#{combining}_values=", common)
-      relation.bind_values = common_binds + mine_binds + theirs_binds
+      relation.send("#{combining}_values=", common.where_values)
+      relation.bind_values = common.bind_values
       return relation  
     end
   end
@@ -38,20 +42,33 @@ class ActiveRecord::Relation
     self.or(klass.having(*args))
   end
 private
-  def rails_or_extract_where_values(where_values, bind_values) 
-    binds_index = 0
-    new_bind_values = []
-    new_where_values = where_values.select do |node|
-      flag = yield(node)
-      if not node.is_a?(String)
-        binds_contains = node.grep(Arel::Nodes::BindParam).size
-        pre_binds_index = binds_index
-        binds_index += binds_contains
-        (pre_binds_index...binds_index).each{|i| new_bind_values << bind_values[i] } if flag
-      end
-      next flag
+  class RailsOrWhereBindingMix
+    attr_reader :where_values
+    attr_reader :bind_values
+    def initialize(where_values, bind_values)
+      @where_values = where_values
+      @bind_values = bind_values
     end
-    return [new_where_values, new_bind_values]
+    def merge!(other)
+      @where_values += other.where_values
+      @bind_values += other.bind_values
+      return self
+    end
+    def select
+      binds_index = 0
+      new_bind_values = []
+      new_where_values = @where_values.select do |node|
+        flag = yield(node)
+        if not node.is_a?(String)
+          binds_contains = node.grep(Arel::Nodes::BindParam).size
+          pre_binds_index = binds_index
+          binds_index += binds_contains
+          (pre_binds_index...binds_index).each{|i| new_bind_values << @bind_values[i] } if flag
+        end
+        next flag
+      end
+      return RailsOrWhereBindingMix.new(new_where_values, new_bind_values)
+    end
   end
   def rails_or_values_to_arel(values)
     values.map!{|x| rails_or_wrap_arel(x) }
