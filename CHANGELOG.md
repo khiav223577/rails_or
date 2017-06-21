@@ -1,6 +1,10 @@
 
 ### RailsOr [Unreleased] 
 
+- No changes.
+
+### RailsOr [1.1.5] - (June 21, 2017)
+
 - Fix bind values mismatch after merging common where values. [[#19](https://github.com/khiav223577/rails_or/pull/19)] @khiav223577
 <br><br>
 
@@ -46,7 +50,8 @@
 - Add #or method [[#1](https://github.com/khiav223577/rails_or/pull/1)] @khiav223577
 <br><br>
 
-[Unreleased]: https://github.com/khiav223577/rails_or/compare/v1.1.4...HEAD
+[Unreleased]: https://github.com/khiav223577/rails_or/compare/v1.1.5...HEAD
+[1.1.5]: https://github.com/khiav223577/rails_or/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/khiav223577/rails_or/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/khiav223577/rails_or/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/khiav223577/rails_or/compare/v1.1.1...v1.1.2
