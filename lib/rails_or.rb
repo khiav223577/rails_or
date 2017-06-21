@@ -34,6 +34,22 @@ class ActiveRecord::Relation
     self.or(klass.having(*args))
   end
 private
+  def rails_or_except_binds(where_values, except_where_values, bind_values) 
+    binds_index = 0
+    new_bind_values = []
+    new_where_values = where_values.reject do |node|
+      except = except_where_values.include?(node)
+      if not node.is_a?(String)
+        binds_contains = node.grep(Arel::Nodes::BindParam).size
+        (binds_index...(binds_index + binds_contains)).each do |i| 
+          new_bind_values[i] = bind_values[i] if not except
+        end
+        binds_index += binds_contains
+      end
+      next except
+    end
+    return [new_where_values, new_bind_values.compact]
+  end
   def rails_or_values_to_arel(values)
     values.map!{|x| rails_or_wrap_arel(x) }
     return (values.size > 1 ? Arel::Nodes::And.new(values) : values)
