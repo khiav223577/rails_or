@@ -1,4 +1,5 @@
 require "rails_or/version"
+require "rails_or/where_binding_mixs"
 require 'active_record'
 
 class ActiveRecord::Relation
@@ -12,17 +13,24 @@ class ActiveRecord::Relation
     def or(*other)
       other        = rails_or_parse_parameter(*other)
       combining    = group_values.any? ? :having : :where
-      left_values  = send("#{combining}_values")
-      right_values = other.send("#{combining}_values")
-      common       = left_values & right_values
-      mine         = left_values - common
-      theirs       = right_values - common
-      if mine.any? && theirs.any?
-        common << Arel::Nodes::Or.new(rails_or_values_to_arel(mine), rails_or_values_to_arel(theirs))
+      left  = RailsOr::WhereBindingMixs.new(self.send("#{combining}_values"), self.bind_values)
+      right = RailsOr::WhereBindingMixs.new(other.send("#{combining}_values"), other.bind_values)
+      common = left & right
+
+      left  -= common
+      right -= common
+      
+      if left.where_values.any? && right.where_values.any?
+        arel_or = Arel::Nodes::Or.new(
+          rails_or_values_to_arel(left.where_values),
+          rails_or_values_to_arel(right.where_values),
+        )
+        common += RailsOr::WhereBindingMixs.new([arel_or], left.bind_values + right.bind_values)
       end
+
       relation = rails_or_get_current_scope
-      relation.send("#{combining}_values=", common)
-      relation.bind_values = self.bind_values + other.bind_values
+      relation.send("#{combining}_values=", common.where_values)
+      relation.bind_values = common.bind_values
       return relation  
     end
   end
@@ -33,7 +41,9 @@ class ActiveRecord::Relation
   def or_having(*args)
     self.or(klass.having(*args))
   end
+
 private
+
   def rails_or_values_to_arel(values)
     values.map!{|x| rails_or_wrap_arel(x) }
     return (values.size > 1 ? Arel::Nodes::And.new(values) : values)

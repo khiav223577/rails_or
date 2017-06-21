@@ -1,7 +1,7 @@
 
 ### RailsOr [Unreleased] 
 
-- No changes.
+- Fix bind values mismatch after merging common where values. [[#19](https://github.com/khiav223577/rails_or/pull/19)] @khiav223577
 <br><br>
 
 ### RailsOr [1.1.4] - (April 1, 2017)
