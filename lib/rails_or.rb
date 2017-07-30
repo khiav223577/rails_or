@@ -29,6 +29,10 @@ class ActiveRecord::Relation
       end
 
       relation = rails_or_get_current_scope
+      if defined?(ActiveRecord::NullRelation) # Rails 3 does not have ActiveRecord::NullRelation
+        return other if relation.is_a?(ActiveRecord::NullRelation)
+        return relation if other.is_a?(ActiveRecord::NullRelation)
+      end
       relation.send("#{combining}_values=", common.where_values)
       relation.bind_values = common.bind_values
       return relation  
