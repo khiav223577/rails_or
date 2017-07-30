@@ -228,4 +228,10 @@ class RailsOrTest < Minitest::Test
     def p2.all ; super.to_a ; end
     assert_equal expected, p1.or(p2).to_a
   end
+
+  def test_or_with_none_relation
+    expected = User.where(name: 'Pearl').pluck(:id)
+    assert_equal expected, User.where('0').or(name: 'Pearl').pluck(:id)
+    assert_equal expected, User.none.or(name: 'Pearl').pluck(:id) if User.respond_to?(:none)
+  end
 end
