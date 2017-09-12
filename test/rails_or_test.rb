@@ -246,6 +246,21 @@ class RailsOrTest < Minitest::Test
     assert_equal expected, Post.where('id = 1').or(Post.where('')).to_a
   end
 
+  def test_or_preserves_other_querying_methods
+    expected = Post.where('id = 1 or id = 2 or id = 3').order('title asc').to_a
+    partial = Post.order('title asc')
+    assert_equal expected, partial.where('id = 1').or(partial.where(:id => [2, 3])).to_a
+    assert_equal expected, Post.order('title asc').where('id = 1').or(Post.order('title asc').where(:id => [2, 3])).to_a
+  end
+
+  def test_or_on_loaded_relation
+    expected = Post.where('id = 1 or id = 2').to_a
+    p = Post.where('id = 1')
+    p.load
+    assert_equal p.loaded?, true
+    assert_equal expected, p.or(Post.where('id = 2')).to_a
+  end
+  
   # ----------------------------------------------------------------
   # ● test other gem
   # ----------------------------------------------------------------
