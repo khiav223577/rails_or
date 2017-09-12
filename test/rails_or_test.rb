@@ -8,9 +8,10 @@ class RailsOrTest < Minitest::Test
   def test_that_it_has_a_version_number
     refute_nil ::RailsOr::VERSION
   end
-#--------------------------------
-#  Parameter check
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● Parameter check
+  # ----------------------------------------------------------------
   def test_or_with_model1
     expected = Post.where('id = 1 or id = 2').to_a
     assert_equal expected, Post.where('id = 1').or(Post.where('id = 2')).to_a
@@ -46,9 +47,10 @@ class RailsOrTest < Minitest::Test
     assert_equal expected, Post.where('id = 1').or('id = ? OR id = ?', 2, 3).to_a
     assert_equal expected, Post.where('id = 1').or('id = ?', 2).or('id = ?', 3).to_a
   end
-#--------------------------------
-#  Common condition
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● Common condition
+  # ----------------------------------------------------------------
   def test_or_with_shared_where 
     expected = Post.where('id = 1 and (title = ? or title = ?)', "John's post1", "John's post2").to_a
     target = Post.where('id = 1').where(:title => "John's post1").or(Post.where('id = 1').where(:title => "John's post2"))
@@ -71,31 +73,35 @@ class RailsOrTest < Minitest::Test
     #Correct: SELECT "users".* FROM "users"  WHERE ("users"."id" = 1 OR "users"."id" = 2)
     assert_equal 1, User.where(:id => 1).or(:id => 2).to_sql.count('(')
   end
-#--------------------------------
-#  Multiple columns
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● Multiple columns
+  # ----------------------------------------------------------------
   def test_or_with_multiple_attributes
     expected = Post.where('id = 1 or title = ?', "Kathenrie's post1").to_a
     assert_equal expected, Post.where('id = 1').or(:title => "Kathenrie's post1").to_a
   end
-#--------------------------------
-#  join
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● join
+  # ----------------------------------------------------------------
   def test_or_with_join
     expected = User.joins(:posts).where('user_id = 1 AND (title = ? OR title = ? OR title = ?)', "John's post1", "John's post2", "John's post3").to_a
     assert_equal expected, User.joins(:posts).where('0')
                                .or(:id => 1, :'posts.title' => "John's post1")
                                .or(:id => 1, :'posts.title' => "John's post2")
-                               .or(:id => 1, :'posts.title' => "John's post3").to_a
+                               .or(:id => 1, :'posts.title' => "John's post3")
+                               .to_a
   end
 
   def test_or_with_join_and_no_join
     expected = User.joins(:posts).where('user_id = 1 AND title = ? OR user_id = 2', "John's post2").to_a
     assert_equal expected, User.joins(:posts).where(:id => 1, :'posts.title' => "John's post2").or(:id => 2).to_a
   end
-#--------------------------------
-#  having
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● having
+  # ----------------------------------------------------------------
   def test_or_with_having
     expected = Post.group(:user_id).having("COUNT(*) = 1 OR COUNT(*) = 2").to_a
     assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or(Post.group(:user_id).having("COUNT(*) = 2")).to_a
@@ -106,9 +112,10 @@ class RailsOrTest < Minitest::Test
     expected = User.joins(:posts).group(:user_id).having("COUNT(*) = 1 OR COUNT(*) > 1").to_a
     assert_equal expected, User.joins(:posts).group(:user_id).having("COUNT(*) > 1").or_having("COUNT(*) = 1").to_a
   end
-#--------------------------------
-#  uniq / limit / offset / order
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● uniq / limit / offset / order
+  # ----------------------------------------------------------------
   def test_or_with_limit
     expected = Post.where('user_id = 1 OR user_id = 2').limit(4).to_a
     assert_equal expected, Post.limit(4).where(:user_id => 1).or(:user_id => 2).to_a
@@ -128,9 +135,10 @@ class RailsOrTest < Minitest::Test
     expected = Post.where('user_id = 1 OR user_id = 2 OR user_id = 3').order('user_id desc').pluck(:user_id)
     assert_equal expected, Post.order('user_id desc').where(:user_id => 1).or(:user_id => 2).or(:user_id => 3).pluck(:user_id)
   end
-#--------------------------------
-#  logic order
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● logic order
+  # ----------------------------------------------------------------
   def test_A_and_B_or_C # (A && B) || C, C || (B && A)
     expected = Post.where('(user_id = ? AND title = ?) OR user_id = ?', 1, "John's post1", 2).to_a
     assert_equal expected, Post.where(:user_id => 1).where(:title => "John's post1").or(:user_id => 2).to_a
@@ -158,9 +166,10 @@ class RailsOrTest < Minitest::Test
       assert_equal expected, Post.where.not('title LIKE ?', "Pearl's %").or(Post.where.not(:user_id => 1).where('title LIKE ?', "Kathenrie's %")).to_a
     end
   end
-#--------------------------------
-#  Nested
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● Nested
+  # ----------------------------------------------------------------
   def test_nested_or # (A && (B || C)) || D, ((B || C) && A) || D
     expected = Post.where('(title like ?) AND (start_time IS NULL OR start_time > ?) OR (title = ?)', 'John%', Time.parse('2016/1/15'), "Pearl's post1").pluck(:title)
     p1 = Post.with_title_like('John%').where('start_time IS NULL OR start_time > ?', Time.parse('2016/1/15'))
@@ -169,9 +178,10 @@ class RailsOrTest < Minitest::Test
     p1 = Post.where(:start_time => nil).or('start_time > ?', Time.parse('2016/1/15')).with_title_like('John%')
     assert_equal expected, p1.or(:title => "Pearl's post1").pluck(:title)
   end
-#--------------------------------
-#  Association test
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● Association test
+  # ----------------------------------------------------------------
   def test_two_has_many_result # model.others1 || model.others2
     user = User.where(:name => 'John').first
     assert_equal user.sent_messages.or(user.received_messages).pluck(:content), [
@@ -180,9 +190,10 @@ class RailsOrTest < Minitest::Test
       "user3 send to user1",
     ]
   end
-#--------------------------------
-#  Scope test
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● Scope test
+  # ----------------------------------------------------------------
   def test_two_scope
     u1 = User.where(:name => 'John').first
     u2 = User.where(:name => 'Pearl').first
@@ -209,9 +220,10 @@ class RailsOrTest < Minitest::Test
       "Pearl's post2",
     ]
   end
-#--------------------------------
-#  From Rails 5
-#--------------------------------
+
+  # ----------------------------------------------------------------
+  # ● From Rails 5
+  # ----------------------------------------------------------------
   def test_or_with_relation
     expected = Post.where('id = 1 or id = 2').to_a
     assert_equal expected, Post.where('id = 1').or(Post.where('id = 2')).to_a
@@ -232,10 +244,11 @@ class RailsOrTest < Minitest::Test
     expected = Post.all.to_a
     assert_equal expected, Post.where('id = 1').or(Post.where('')).to_a
   end
-#--------------------------------
-#  test other gem
-#--------------------------------
-  def test_if_method_all_return_array #EX: gem activerecord-deprecated_finders will change #all in Rails 4
+
+  # ----------------------------------------------------------------
+  # ● test other gem
+  # ----------------------------------------------------------------
+  def test_if_method_all_return_array # EX: gem activerecord-deprecated_finders will change #all in Rails 4
     expected = Post.where('id = 1 or id = 2').to_a
     p1 = Post.where(:id => 1)
     p2 = Post.where(:id => 2)
