@@ -78,6 +78,8 @@ class ActiveRecord::Relation
     relation.limit_value = self.limit_value
     relation.group_values = self.group_values
     relation.distinct_value = self.distinct_value
+    relation.order_values = self.order_values
+    relation.offset_value = self.offset_value
     return relation
   end
 

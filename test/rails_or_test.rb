@@ -4,7 +4,7 @@ class RailsOrTest < Minitest::Test
   def setup
     
   end
-  
+
   def test_that_it_has_a_version_number
     refute_nil ::RailsOr::VERSION
   end
@@ -121,38 +121,38 @@ class RailsOrTest < Minitest::Test
 
   def test_or_with_offset #Rails 5 doesn't support this
     expected = Post.where('user_id = 1 OR user_id = 2').offset(3).first
-    assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).offset(3).first
+    assert_equal expected, Post.offset(3).where(:user_id => 1).or(:user_id => 2).first
   end
 
-  def test_or_with_order #Rails 5 doesn't support this
+  def test_or_with_order
     expected = Post.where('user_id = 1 OR user_id = 2 OR user_id = 3').order('user_id desc').pluck(:user_id)
-    assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).or(:user_id => 3).order('user_id desc').pluck(:user_id)
+    assert_equal expected, Post.order('user_id desc').where(:user_id => 1).or(:user_id => 2).or(:user_id => 3).pluck(:user_id)
   end
 #--------------------------------
 #  logic order
 #--------------------------------
-  def test_A_and_B_or_C #(A && B) || C, C || (B && A)
+  def test_A_and_B_or_C # (A && B) || C, C || (B && A)
     expected = Post.where('(user_id = ? AND title = ?) OR user_id = ?', 1, "John's post1", 2).to_a
     assert_equal expected, Post.where(:user_id => 1).where(:title => "John's post1").or(:user_id => 2).to_a
     assert_equal expected, Post.where(:user_id => 2).or(Post.where(:title => "John's post1").where(:user_id => 1)).to_a
   end
 
-  def test_A_or_B_and_C #(A || B) && C
+  def test_A_or_B_and_C # (A || B) && C
     expected = Post.where('(user_id = ? OR user_id = ?) AND title LIKE ?', 1, 2, "John's %").to_a
     assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).where('title LIKE ?', "John's %").to_a
   end
 
   if Gem::Version.new(ActiveRecord::VERSION::STRING) > Gem::Version.new('4.0.2')
-    def test_A_and_not_B_or_C #(A && !B) || C, C || (!B && A)
+    def test_A_and_not_B_or_C # (A && !B) || C, C || (!B && A)
       expected = Post.where('(user_id = ? AND NOT title = ?) OR user_id = ?', 1, "John's post1", 2).to_a
       assert_equal expected, Post.where(:user_id => 1).where.not(:title => "John's post1").or(:user_id => 2).to_a
       assert_equal expected, Post.where(:user_id => 2).or(Post.where.not(:title => "John's post1").where(:user_id => 1)).to_a
     end
-    def test_A_or_B_and_not_C #(A || B) && !C
+    def test_A_or_B_and_not_C # (A || B) && !C
       expected = Post.where('(user_id = ? OR user_id = ?) AND title NOT LIKE ?', 1, 2, "John's %").to_a
       assert_equal expected, Post.where(:user_id => 1).or(:user_id => 2).where.not('title LIKE ?', "John's %").to_a
     end
-    def test_A_and_not_B_or_not_C #(A && !B) || !C, !C || (!B && A)
+    def test_A_and_not_B_or_not_C # (A && !B) || !C, !C || (!B && A)
       expected = Post.where('(title LIKE ? AND user_id != ?) OR title NOT LIKE ?', 1, "Kathenrie's %", "Pearl's %").to_a
       assert_equal expected, Post.where('title LIKE ?', "Kathenrie's %").where.not(:user_id => 1).or_not('title LIKE ?', "Pearl's %").to_a
       assert_equal expected, Post.where.not('title LIKE ?', "Pearl's %").or(Post.where.not(:user_id => 1).where('title LIKE ?', "Kathenrie's %")).to_a
@@ -161,7 +161,7 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
 #  Nested
 #--------------------------------
-  def test_nested_or #(A && (B || C)) || D, ((B || C) && A) || D
+  def test_nested_or # (A && (B || C)) || D, ((B || C) && A) || D
     expected = Post.where('(title like ?) AND (start_time IS NULL OR start_time > ?) OR (title = ?)', 'John%', Time.parse('2016/1/15'), "Pearl's post1").pluck(:title)
     p1 = Post.with_title_like('John%').where('start_time IS NULL OR start_time > ?', Time.parse('2016/1/15'))
     assert_equal expected, p1.or(:title => "Pearl's post1").pluck(:title)
@@ -172,7 +172,7 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
 #  Association test
 #--------------------------------
-  def test_two_has_many_result #model.others1 || model.others2
+  def test_two_has_many_result # model.others1 || model.others2
     user = User.where(:name => 'John').first
     assert_equal user.sent_messages.or(user.received_messages).pluck(:content), [
       "user1 send to user2", 
