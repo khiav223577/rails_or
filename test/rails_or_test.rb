@@ -4,6 +4,7 @@ class RailsOrTest < Minitest::Test
   def setup
     
   end
+  
   def test_that_it_has_a_version_number
     refute_nil ::RailsOr::VERSION
   end
@@ -114,8 +115,8 @@ class RailsOrTest < Minitest::Test
   end
 
   def test_or_with_uniq #Rails 5 doesn't support this
-    expected = Post.uniq.where('user_id = 1 OR user_id = 2').pluck(:user_id)
-    assert_equal expected, Post.uniq.where(:user_id => 1).or(:user_id => 2).pluck(:user_id)
+    expected = Post.distinct.where('user_id = 1 OR user_id = 2').pluck(:user_id)
+    assert_equal expected, Post.distinct.where(:user_id => 1).or(:user_id => 2).pluck(:user_id)
   end
 
   def test_or_with_offset #Rails 5 doesn't support this

@@ -77,6 +77,7 @@ class ActiveRecord::Relation
     relation.joins_values = self.joins_values
     relation.limit_value = self.limit_value
     relation.group_values = self.group_values
+    relation.distinct_value = self.distinct_value
     return relation
   end
 
