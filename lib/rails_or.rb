@@ -4,10 +4,13 @@ require 'active_record'
 
 class ActiveRecord::Relation
   IS_RAILS3_FLAG = Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
+  IS_RAILS5_FLAG = Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('5.0.0')
   if method_defined?(:or)
-    alias rails5_or or
-    def or(*other)
-      return rails5_or(rails_or_parse_parameter(*other))
+    if not method_defined?(:rails5_or)
+      alias_method :rails5_or, :or
+      def or(*other)
+        return rails5_or(rails_or_parse_parameter(*other))
+      end
     end
   else
     def or(*other)
@@ -38,40 +41,61 @@ class ActiveRecord::Relation
       return relation  
     end
   end
-  def or_not(*args)
-    raise 'This method is not support in Rails 3' if IS_RAILS3_FLAG
-    return self.or(klass.where.not(*args))
-  end
-  def or_having(*args)
-    self.or(klass.having(*args))
+
+  def or_not(*args) # Works in Rails 4+
+    self.or(klass.where.not(*args))
   end
 
-private
+  def or_having(hash)
+    self.or(rails_or_spwan_relation(:having, hash))
+  end
+
+  private
 
   def rails_or_values_to_arel(values)
     values.map!{|x| rails_or_wrap_arel(x) }
     return (values.size > 1 ? Arel::Nodes::And.new(values) : values)
   end
+
   def rails_or_wrap_arel(node)
     return node if Arel::Nodes::Equality === node
     return Arel::Nodes::Grouping.new(String === node ? Arel.sql(node) : node)
   end
+
   def rails_or_parse_parameter(*other)
     other = other.first if other.size == 1
     case other
-    when Hash   ; klass.where(other)
-    when Array  ; klass.where(other)
-    when String ; klass.where(other)
+    when Hash   ; rails_or_spwan_relation(:where, other)
+    when Array  ; rails_or_spwan_relation(:where, other)
+    when String ; rails_or_spwan_relation(:where, other)
     else        ; other
     end
   end
+
+  def rails_or_copy_values_to(relation) # For Rails 5
+    relation.joins_values = self.joins_values
+    relation.limit_value = self.limit_value
+    relation.group_values = self.group_values
+    relation.distinct_value = self.distinct_value
+    relation.order_values = self.order_values
+    relation.offset_value = self.offset_value
+    relation.references_values = self.references_values
+  end
+
+  def rails_or_spwan_relation(method, condition)
+    relation = klass.send(method, condition)
+    rails_or_copy_values_to(relation) if IS_RAILS5_FLAG
+    return relation
+  end
+
   def rails_or_get_current_scope
     return self.clone if IS_RAILS3_FLAG
-    #ref: https://github.com/rails/rails/blob/17ef58db1776a795c9f9e31a1634db7bcdc3ecdf/activerecord/lib/active_record/scoping/named.rb#L26
-    #return self.all # <- cannot use this because some gem changes this method's behavior
+    # ref: https://github.com/rails/rails/blob/17ef58db1776a795c9f9e31a1634db7bcdc3ecdf/activerecord/lib/active_record/scoping/named.rb#L26
+    # return self.all # <- cannot use this because some gem changes this method's behavior
     return (self.current_scope || self.default_scoped).clone
   end
 end
+
 class ActiveRecord::Base
   def self.or(*args)
     self.where('').or(*args)
