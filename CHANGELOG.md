@@ -3,6 +3,15 @@
 
 - No changes.
 
+### RailsOr [1.1.7] - (September 12, 2017)
+
+- Better Rails 5 Support. [[#21](https://github.com/khiav223577/rails_or/pull/21)] @khiav223577
+
+### RailsOr [1.1.6] - (June 30, 2017)
+
+- Supports `or` with `.none`. [[#20](https://github.com/khiav223577/rails_or/pull/20)] @khiav223577
+<br><br>
+
 ### RailsOr [1.1.5] - (June 21, 2017)
 
 - Fix bind values mismatch after merging common where values. [[#19](https://github.com/khiav223577/rails_or/pull/19)] @khiav223577
@@ -50,7 +59,9 @@
 - Add #or method [[#1](https://github.com/khiav223577/rails_or/pull/1)] @khiav223577
 <br><br>
 
-[Unreleased]: https://github.com/khiav223577/rails_or/compare/v1.1.5...HEAD
+[Unreleased]: https://github.com/khiav223577/rails_or/compare/v1.1.7...HEAD
+[1.1.7]: https://github.com/khiav223577/rails_or/compare/v1.1.6...v1.1.7
+[1.1.6]: https://github.com/khiav223577/rails_or/compare/v1.1.5...v1.1.6
 [1.1.5]: https://github.com/khiav223577/rails_or/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/khiav223577/rails_or/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/khiav223577/rails_or/compare/v1.1.2...v1.1.3
