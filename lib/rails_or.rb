@@ -5,9 +5,11 @@ require 'active_record'
 class ActiveRecord::Relation
   IS_RAILS3_FLAG = Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
   if method_defined?(:or)
-    alias rails5_or or
-    def or(*other)
-      return rails5_or(rails_or_parse_parameter(*other))
+    if not method_defined?(:rails5_or)
+      alias_method :rails5_or, :or
+      def or(*other)
+        return rails5_or(rails_or_parse_parameter(*other))
+      end
     end
   else
     def or(*other)
@@ -38,24 +40,28 @@ class ActiveRecord::Relation
       return relation  
     end
   end
+
   def or_not(*args)
     raise 'This method is not support in Rails 3' if IS_RAILS3_FLAG
     return self.or(klass.where.not(*args))
   end
+
   def or_having(*args)
     self.or(klass.having(*args))
   end
 
-private
+  private
 
   def rails_or_values_to_arel(values)
     values.map!{|x| rails_or_wrap_arel(x) }
     return (values.size > 1 ? Arel::Nodes::And.new(values) : values)
   end
+
   def rails_or_wrap_arel(node)
     return node if Arel::Nodes::Equality === node
     return Arel::Nodes::Grouping.new(String === node ? Arel.sql(node) : node)
   end
+
   def rails_or_parse_parameter(*other)
     other = other.first if other.size == 1
     case other
@@ -65,6 +71,7 @@ private
     else        ; other
     end
   end
+
   def rails_or_get_current_scope
     return self.clone if IS_RAILS3_FLAG
     #ref: https://github.com/rails/rails/blob/17ef58db1776a795c9f9e31a1634db7bcdc3ecdf/activerecord/lib/active_record/scoping/named.rb#L26
