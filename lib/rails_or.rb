@@ -4,6 +4,7 @@ require 'active_record'
 
 class ActiveRecord::Relation
   IS_RAILS3_FLAG = Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
+  IS_RAILS5_FLAG = Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('5.0.0')
   if method_defined?(:or)
     if not method_defined?(:rails5_or)
       alias_method :rails5_or, :or
@@ -71,9 +72,7 @@ class ActiveRecord::Relation
     end
   end
 
-  def rails_or_spwan_relation(method, condition)
-    relation = klass.send(method, condition)
-    # The following is for rails 5+
+  def rails_or_copy_values_to(relation) # For Rails 5
     relation.joins_values = self.joins_values
     relation.limit_value = self.limit_value
     relation.group_values = self.group_values
@@ -81,6 +80,11 @@ class ActiveRecord::Relation
     relation.order_values = self.order_values
     relation.offset_value = self.offset_value
     relation.references_values = self.references_values
+  end
+
+  def rails_or_spwan_relation(method, condition)
+    relation = klass.send(method, condition)
+    rails_or_copy_values_to(relation) if IS_RAILS5_FLAG
     return relation
   end
 
@@ -91,6 +95,7 @@ class ActiveRecord::Relation
     return (self.current_scope || self.default_scoped).clone
   end
 end
+
 class ActiveRecord::Base
   def self.or(*args)
     self.where('').or(*args)
