@@ -65,11 +65,19 @@ class ActiveRecord::Relation
   def rails_or_parse_parameter(*other)
     other = other.first if other.size == 1
     case other
-    when Hash   ; klass.where(other)
-    when Array  ; klass.where(other)
-    when String ; klass.where(other)
+    when Hash   ; rails_or_spwan_relation(other)
+    when Array  ; rails_or_spwan_relation(other)
+    when String ; rails_or_spwan_relation(other)
     else        ; other
     end
+  end
+
+  def rails_or_spwan_relation(condition) # for rails 5
+    relation = klass.where(condition)
+    relation.joins_values = self.joins_values
+    relation.limit_value = self.limit_value
+    relation.group_values = self.group_values
+    return relation
   end
 
   def rails_or_get_current_scope
