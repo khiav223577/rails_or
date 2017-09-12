@@ -122,8 +122,9 @@ class RailsOrTest < Minitest::Test
   end
 
   def test_or_with_uniq
-    expected = Post.distinct.where('user_id = 1 OR user_id = 2').pluck(:user_id)
-    assert_equal expected, Post.distinct.where(:user_id => 1).or(:user_id => 2).pluck(:user_id)
+    posts = (Post.respond_to?(:distinct) ? Post.distinct : Post.uniq)
+    expected = posts.where('user_id = 1 OR user_id = 2').pluck(:user_id)
+    assert_equal expected, posts.where(:user_id => 1).or(:user_id => 2).pluck(:user_id)
   end
 
   def test_or_with_offset
