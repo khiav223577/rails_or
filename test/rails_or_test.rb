@@ -96,30 +96,30 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
 #  having
 #--------------------------------
-  def test_or_with_having #Rails 5 doesn't support this
+  def test_or_with_having
     expected = Post.group(:user_id).having("COUNT(*) = 1 OR COUNT(*) = 2").to_a
-    assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or(Post.having("COUNT(*) = 2")).to_a
+    assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or(Post.group(:user_id).having("COUNT(*) = 2")).to_a
     assert_equal expected, Post.group(:user_id).having("COUNT(*) = 1").or_having("COUNT(*) = 2").to_a
   end
 
-  def test_or_with_join_and_having #Rails 5 doesn't support this
+  def test_or_with_join_and_having
     expected = User.joins(:posts).group(:user_id).having("COUNT(*) = 1 OR COUNT(*) > 1").to_a
     assert_equal expected, User.joins(:posts).group(:user_id).having("COUNT(*) > 1").or_having("COUNT(*) = 1").to_a
   end
 #--------------------------------
 #  uniq / limit / offset / order
 #--------------------------------
-  def test_or_with_limit #Rails 5 doesn't support this
+  def test_or_with_limit
     expected = Post.where('user_id = 1 OR user_id = 2').limit(4).to_a
     assert_equal expected, Post.limit(4).where(:user_id => 1).or(:user_id => 2).to_a
   end
 
-  def test_or_with_uniq #Rails 5 doesn't support this
+  def test_or_with_uniq
     expected = Post.distinct.where('user_id = 1 OR user_id = 2').pluck(:user_id)
     assert_equal expected, Post.distinct.where(:user_id => 1).or(:user_id => 2).pluck(:user_id)
   end
 
-  def test_or_with_offset #Rails 5 doesn't support this
+  def test_or_with_offset
     expected = Post.where('user_id = 1 OR user_id = 2').offset(3).first
     assert_equal expected, Post.offset(3).where(:user_id => 1).or(:user_id => 2).first
   end

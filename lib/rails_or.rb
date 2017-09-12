@@ -46,8 +46,8 @@ class ActiveRecord::Relation
     return self.or(klass.where.not(*args))
   end
 
-  def or_having(*args)
-    self.or(klass.having(*args))
+  def or_having(hash)
+    self.or(rails_or_spwan_relation(:having, hash))
   end
 
   private
@@ -65,15 +65,15 @@ class ActiveRecord::Relation
   def rails_or_parse_parameter(*other)
     other = other.first if other.size == 1
     case other
-    when Hash   ; rails_or_spwan_relation(other)
-    when Array  ; rails_or_spwan_relation(other)
-    when String ; rails_or_spwan_relation(other)
+    when Hash   ; rails_or_spwan_relation(:where, other)
+    when Array  ; rails_or_spwan_relation(:where, other)
+    when String ; rails_or_spwan_relation(:where, other)
     else        ; other
     end
   end
 
-  def rails_or_spwan_relation(condition) # for rails 5
-    relation = klass.where(condition)
+  def rails_or_spwan_relation(method, condition) # for rails 5
+    relation = klass.send(method, condition)
     relation.joins_values = self.joins_values
     relation.limit_value = self.limit_value
     relation.group_values = self.group_values
