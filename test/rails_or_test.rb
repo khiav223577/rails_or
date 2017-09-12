@@ -81,7 +81,7 @@ class RailsOrTest < Minitest::Test
 #--------------------------------
 #  join
 #--------------------------------
-  def test_or_with_join #Rails 5 doesn't support this
+  def test_or_with_join
     expected = User.joins(:posts).where('user_id = 1 AND (title = ? OR title = ? OR title = ?)', "John's post1", "John's post2", "John's post3").to_a
     assert_equal expected, User.joins(:posts).where('0')
                                .or(:id => 1, :'posts.title' => "John's post1")
@@ -89,7 +89,7 @@ class RailsOrTest < Minitest::Test
                                .or(:id => 1, :'posts.title' => "John's post3").to_a
   end
 
-  def test_or_with_join_and_no_join #Rails 5 doesn't support this
+  def test_or_with_join_and_no_join
     expected = User.joins(:posts).where('user_id = 1 AND title = ? OR user_id = 2', "John's post2").to_a
     assert_equal expected, User.joins(:posts).where(:id => 1, :'posts.title' => "John's post2").or(:id => 2).to_a
   end

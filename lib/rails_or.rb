@@ -80,6 +80,7 @@ class ActiveRecord::Relation
     relation.distinct_value = self.distinct_value
     relation.order_values = self.order_values
     relation.offset_value = self.offset_value
+    relation.references_values = self.references_values
     return relation
   end
 
