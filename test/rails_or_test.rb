@@ -256,11 +256,11 @@ class RailsOrTest < Minitest::Test
   def test_or_on_loaded_relation
     expected = Post.where('id = 1 or id = 2').to_a
     p = Post.where('id = 1')
-    p.load
+    p.map(&:id) # p.load # Rails 3 doesn't have load method
     assert_equal p.loaded?, true
     assert_equal expected, p.or(Post.where('id = 2')).to_a
   end
-  
+
   # ----------------------------------------------------------------
   # ● test other gem
   # ----------------------------------------------------------------
