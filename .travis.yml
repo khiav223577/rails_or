@@ -12,6 +12,7 @@ gemfile:
   - gemfiles/3.2.gemfile
   - gemfiles/4.2.gemfile
   - gemfiles/5.0.gemfile
+  - gemfiles/5.1.gemfile
 addons:
     code_climate:
         repo_token: 4be4fd5792acf886a179e8ebff97d155dc19858816d7179f2bf5002bae874818
