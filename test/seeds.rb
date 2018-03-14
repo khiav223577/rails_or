@@ -17,11 +17,14 @@ ActiveRecord::Schema.define do
     t.string :content
   end
 end
+
 class User < ActiveRecord::Base
   serialize :serialized_attribute, Hash
   has_many :posts
   has_many :sent_messages,     :class_name => "UserMessage", :foreign_key => :sender_user_id,   :dependent => :destroy
   has_many :received_messages, :class_name => "UserMessage", :foreign_key => :receiver_user_id, :dependent => :destroy
+
+  scope :none, ->{ where('0') } if not User.respond_to?(:none) # For Rails 3
 end
 class Post < ActiveRecord::Base
   belongs_to :user
