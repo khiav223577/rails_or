@@ -3,6 +3,10 @@
 
 - No changes.
 
+### RailsOr [1.1.8] - (March 14, 2018)
+
+- Fix missing from_clause when using #from and #none together [[#23](https://github.com/khiav223577/rails_or/pull/23)] @khiav223577
+
 ### RailsOr [1.1.7] - (September 12, 2017)
 
 - Better Rails 5 Support. [[#21](https://github.com/khiav223577/rails_or/pull/21)] @khiav223577
@@ -59,7 +63,8 @@
 - Add #or method [[#1](https://github.com/khiav223577/rails_or/pull/1)] @khiav223577
 <br><br>
 
-[Unreleased]: https://github.com/khiav223577/rails_or/compare/v1.1.7...HEAD
+[Unreleased]: https://github.com/khiav223577/rails_or/compare/v1.1.8...HEAD
+[1.1.8]: https://github.com/khiav223577/rails_or/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/khiav223577/rails_or/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/khiav223577/rails_or/compare/v1.1.5...v1.1.6
 [1.1.5]: https://github.com/khiav223577/rails_or/compare/v1.1.4...v1.1.5
