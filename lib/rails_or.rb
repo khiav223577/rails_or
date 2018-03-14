@@ -18,6 +18,8 @@ end
 class ActiveRecord::Relation
   IS_RAILS3_FLAG = Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
   IS_RAILS5_FLAG = Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('5.0.0')
+  FROM_VALUE_METHOD = %i[from_value from_clause].find{|s| method_defined?(s) }
+  ASSIGN_FROM_VALUE = :"#{FROM_VALUE_METHOD}="
   if method_defined?(:or)
     if not method_defined?(:rails5_or)
       alias_method :rails5_or, :or
@@ -93,11 +95,11 @@ class ActiveRecord::Relation
     relation.order_values = self.order_values
     relation.offset_value = self.offset_value
     relation.references_values = self.references_values
-    relation.from_clause = self.from_clause
   end
 
   def rails_or_spwan_relation(method, condition)
     relation = klass.send(method, condition)
+    relation.send(ASSIGN_FROM_VALUE, send(FROM_VALUE_METHOD))
     rails_or_copy_values_to(relation) if IS_RAILS5_FLAG
     return relation
   end
