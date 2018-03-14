@@ -293,18 +293,18 @@ class RailsOrTest < Minitest::Test
 
   def test_or_with_from
     users = User.from(User.where(name: ['John', 'Pearl']))
-    user1 = users.where('subquery.name': 'Kathenrie')
-    user2 = users.where('subquery.name': 'Pearl')
-    user1_or_2 = user1.or('subquery.name': 'Pearl')
+    user1 = users.where('subquery.name' => 'Kathenrie')
+    user2 = users.where('subquery.name' => 'Pearl')
+    user1_or_2 = user1.or('subquery.name' => 'Pearl')
     assert_equal ['Pearl'], user1.or(user2).pluck('subquery.name')
     assert_equal ['Pearl'], user1_or_2.pluck('subquery.name')
   end
 
   def test_or_with_from_and_none
     users = User.from(User.where(name: ['John', 'Pearl']))
-    user1 = users.where('subquery.name': 'Kathenrie').none
-    user2 = users.where('subquery.name': 'Pearl')
-    user1_or_2 = user1.or('subquery.name': 'Pearl')
+    user1 = users.where('subquery.name' => 'Kathenrie').none
+    user2 = users.where('subquery.name' => 'Pearl')
+    user1_or_2 = user1.or('subquery.name' => 'Pearl')
     assert_equal ['Pearl'], user1.or(user2).pluck('subquery.name')
     assert_equal ['Pearl'], user1_or_2.pluck('subquery.name')
   end
