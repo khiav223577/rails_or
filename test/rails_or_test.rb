@@ -274,20 +274,30 @@ class RailsOrTest < Minitest::Test
   end
 
   def test_or_with_left_be_none
-    none1 = User.where('0')
-    none2 = User.none if User.respond_to?(:none)
     pearl = User.where(name: 'Pearl')
-
-    assert_equal pearl.pluck(:id), none1.or(pearl).pluck(:id)
-    assert_equal pearl.pluck(:id), none2.or(pearl).pluck(:id) if none2
+    assert_equal pearl.pluck(:id), User.none.or(pearl).pluck(:id)
   end
 
   def test_or_with_right_be_none
-    none1 = User.where('0')
-    none2 = User.none if User.respond_to?(:none)
     pearl = User.where(name: 'Pearl')
+    assert_equal pearl.pluck(:id), pearl.or(User.none).pluck(:id)
+  end
 
-    assert_equal pearl.pluck(:id), pearl.or(none1).pluck(:id)
-    assert_equal pearl.pluck(:id), pearl.or(none2).pluck(:id) if none2
+  def test_or_with_from
+    users = User.from(User.where(name: ['John', 'Pearl']))
+    user1 = users.where('subquery.name' => 'Kathenrie')
+    user2 = users.where('subquery.name' => 'Pearl')
+    user1_or_2 = user1.or('subquery.name' => 'Pearl')
+    assert_equal ['Pearl'], user1.or(user2).pluck('subquery.name')
+    assert_equal ['Pearl'], user1_or_2.pluck('subquery.name')
+  end
+
+  def test_or_with_from_and_none
+    users = User.from(User.where(name: ['John', 'Pearl']))
+    user1 = users.where('subquery.name' => 'Kathenrie').none
+    user2 = users.where('subquery.name' => 'Pearl')
+    user1_or_2 = user1.or('subquery.name' => 'Pearl')
+    assert_equal ['Pearl'], user1.or(user2).pluck('subquery.name')
+    assert_equal ['Pearl'], user1_or_2.pluck('subquery.name')
   end
 end
