@@ -6,7 +6,7 @@ if defined?(ActiveRecord::NullRelation)
   module ActiveRecord::NullRelation
     if method_defined?(:or)
       if not method_defined?(:rails5_or)
-      alias_method :rails5_or, :or
+        alias_method :rails5_or, :or
         def or(*other)
           rails5_or(rails_or_parse_parameter(*other))
         end
