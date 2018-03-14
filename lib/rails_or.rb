@@ -80,6 +80,7 @@ class ActiveRecord::Relation
     relation.order_values = self.order_values
     relation.offset_value = self.offset_value
     relation.references_values = self.references_values
+    relation.from_clause = self.from_clause
   end
 
   def rails_or_spwan_relation(method, condition)
