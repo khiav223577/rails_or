@@ -43,16 +43,16 @@ Person.where(name: 'Pearl').or(Person.where(age: 24))
 Person.where("name = ? OR age = ?", 'Pearl', 24)
 ```
 
-### Easier and Simpler
+### Easier and Cleaner
 
 ```rb
 # Before
-class Post
+class Post < ActiveRecord::Base
   scope :not_expired, ->{ where(end_time: nil).or(Post.where('end_time > ?', Time.now)) }
 end
 
 # After
-class Post
+class Post < ActiveRecord::Base
   scope :not_expired, ->{ where(end_time: nil).or('end_time > ?', Time.now) }
 end
 ```
