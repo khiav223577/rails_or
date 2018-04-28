@@ -43,14 +43,28 @@ Person.where(name: 'Pearl').or(Person.where(age: 24))
 Person.where("name = ? OR age = ?", 'Pearl', 24)
 ```
 
-### Easier to use 
+### Easier and Simpler
+
+```rb
+# Before
+class Post
+  scope :not_expired, ->{ where(end_time: nil).or(Post.where('end_time > ?', Time.now)) }
+end
+
+# After
+class Post
+  scope :not_expired, ->{ where(end_time: nil).or('end_time > ?', Time.now) }
+end
+```
+
+
 No need to repeat writing `Model.joins(XXX).where(...)`
 ```rb
-# before
+# Before
 User.joins(:posts).where(id: 2)
                   .or(User.joins(:posts).where('posts.title = ?',"title"))
                   .or(User.joins(:posts).where('posts.created_at > ?', 1.day.ago))
-# after
+# After
 User.joins(:posts).where(id: 2)
                   .or('posts.title': "title")
                   .or('posts.created_at > ?', 1.day.ago)
