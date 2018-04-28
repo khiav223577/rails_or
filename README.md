@@ -43,7 +43,7 @@ Person.where(name: 'Pearl').or(Person.where(age: 24))
 Person.where("name = ? OR age = ?", 'Pearl', 24)
 ```
 
-### Easier and Cleaner
+### Easier and clearer
 
 ```rb
 # Before
