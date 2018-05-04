@@ -6,16 +6,9 @@
 [![Code Climate](https://codeclimate.com/github/khiav223577/rails_or/badges/gpa.svg)](https://codeclimate.com/github/khiav223577/rails_or)
 [![Test Coverage](https://codeclimate.com/github/khiav223577/rails_or/badges/coverage.svg)](https://codeclimate.com/github/khiav223577/rails_or/coverage)
 
-`rails_or` is a Ruby Gem for adding the `#or` method in Rails 3+,
+`rails_or` is a Ruby Gem for you to write cleaner `OR` query.
 
-allowing use of the OR operator to combine WHERE or HAVING clauses. 
-
-Though this method is available in Rails 5+, 
-
-`rails_or` make it easier to use by adding syntax sugar to `#or` method.
-
-
-
+Also supports in Rails 3 and Rails 4 which don't have built-it `or` method.
 
 
 ## Installation
