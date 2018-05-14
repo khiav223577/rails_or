@@ -56,8 +56,12 @@ class RailsOrTest < Minitest::Test
     target = Post.where('id = 1').where(:title => "John's post1").or(Post.where('id = 1').where(:title => "John's post2"))
     assert_equal expected, target.to_a
 
-    # Rails 5's native #or implementation doesn't merge same condition
-    expected = (Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('5.0.0') ? 1 : 2)
+    version = Gem::Version.new(ActiveRecord::VERSION::STRING)
+    expected = case
+               when version < Gem::Version.new('5.0.0') ; 1 # In Rails 3, 4, use #or method that `rails_or` provides. It will merge same condition.
+               when version < Gem::Version.new('5.2.0') ; 2 # In Rails 5, use native #or method, which doesn't merge same condition.
+               else                                     ; 1 # In Rails 5.2, the issue is fixed, see: https://github.com/rails/rails/pull/29950
+               end
     assert_equal expected, target.to_sql.scan('id = 1').size
   end
 
