@@ -32,11 +32,20 @@ Or install it yourself as:
 ### Same as Rails 5's #or method
 ```rb
 Person.where(name: 'Pearl').or(Person.where(age: 24))
+
 # is the same as
 Person.where("name = ? OR age = ?", 'Pearl', 24)
 ```
 
-### Easier and clearer
+### Clearer Syntax
+
+```rb
+# Before
+user = User.where(account: account).or(User.where(email: account)).take
+
+# After
+user = User.where(account: account).or(email: account).take
+```
 
 ```rb
 # Before
