@@ -8,7 +8,9 @@
 
 `rails_or` is a Ruby Gem for you to write cleaner `OR` query.
 
-Also supports in Rails 3 and Rails 4 which don't have built-it `or` method.
+Supports Rails 3.2, 4.2, 5.0, 5.1, 5.2.
+
+It will using built-in `or` method, which was added in Rails 5, when possible, so that you don't need to worry about that it will polulate `active_model`. Otherwise, it implements `or` method for Rails 3 and Rails 4.
 
 
 ## Installation
