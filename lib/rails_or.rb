@@ -1,19 +1,7 @@
 require 'rails_or/version'
 require 'rails_or/where_binding_mixs'
 require 'active_record'
-
-if defined?(ActiveRecord::NullRelation)
-  module ActiveRecord::NullRelation
-    if method_defined?(:or)
-      if not method_defined?(:rails5_or)
-        alias rails5_or or
-        def or(*other)
-          rails5_or(rails_or_parse_parameter(*other))
-        end
-      end
-    end
-  end
-end
+require 'rails_or/patches/null_relation' if defined?(ActiveRecord::NullRelation)
 
 class ActiveRecord::Relation
   IS_RAILS3_FLAG = Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.0.0')
