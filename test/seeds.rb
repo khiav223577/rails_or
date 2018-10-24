@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
   has_many :received_messages, :class_name => "UserMessage", :foreign_key => :receiver_user_id, :dependent => :destroy
 
   scope :none, ->{ where('0') } if not User.respond_to?(:none) # For Rails 3
-  if ActiveRecord::Relation::IS_RAILS3_FLAG
+  if RailsOr::IS_RAILS3_FLAG
     class << self
       alias_method :origin_from, :from if not method_defined?(:origin_from)
       def from(string)
@@ -33,14 +33,14 @@ class User < ActiveRecord::Base
         return origin_from("(#{string.to_sql}) subquery") # Rails 3's #from only support string arguments
       end
     end
-  end  
+  end
 end
 class Post < ActiveRecord::Base
   belongs_to :user
   scope :with_title_like, proc{|s| where('title LIKE ?', s) }
 end
 class UserMessage < ActiveRecord::Base
-  
+
 end
 users = User.create([
   {:name => 'John', :email => 'john@example.com'},
