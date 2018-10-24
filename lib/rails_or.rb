@@ -1,12 +1,12 @@
-require "rails_or/version"
-require "rails_or/where_binding_mixs"
+require 'rails_or/version'
+require 'rails_or/where_binding_mixs'
 require 'active_record'
 
 if defined?(ActiveRecord::NullRelation)
   module ActiveRecord::NullRelation
     if method_defined?(:or)
       if not method_defined?(:rails5_or)
-        alias_method :rails5_or, :or
+        alias rails5_or or
         def or(*other)
           rails5_or(rails_or_parse_parameter(*other))
         end
@@ -22,7 +22,7 @@ class ActiveRecord::Relation
   ASSIGN_FROM_VALUE = :"#{FROM_VALUE_METHOD}="
   if method_defined?(:or)
     if not method_defined?(:rails5_or)
-      alias_method :rails5_or, :or
+      alias rails5_or or
       def or(*other)
         return rails5_or(rails_or_parse_parameter(*other))
       end
@@ -31,13 +31,13 @@ class ActiveRecord::Relation
     def or(*other)
       other        = rails_or_parse_parameter(*other)
       combining    = group_values.any? ? :having : :where
-      left  = RailsOr::WhereBindingMixs.new(self.send("#{combining}_values"), self.bind_values)
+      left  = RailsOr::WhereBindingMixs.new(send("#{combining}_values"), bind_values)
       right = RailsOr::WhereBindingMixs.new(other.send("#{combining}_values"), other.bind_values)
       common = left & right
 
       left  -= common
       right -= common
-      
+
       if left.where_values.any? && right.where_values.any?
         arel_or = Arel::Nodes::Or.new(
           rails_or_values_to_arel(left.where_values),
@@ -53,7 +53,7 @@ class ActiveRecord::Relation
       end
       relation.send("#{combining}_values=", common.where_values)
       relation.bind_values = common.bind_values
-      return relation  
+      return relation
     end
   end
 
@@ -88,13 +88,13 @@ class ActiveRecord::Relation
   end
 
   def rails_or_copy_values_to(relation) # For Rails 5
-    relation.joins_values = self.joins_values
-    relation.limit_value = self.limit_value
-    relation.group_values = self.group_values
-    relation.distinct_value = self.distinct_value
-    relation.order_values = self.order_values
-    relation.offset_value = self.offset_value
-    relation.references_values = self.references_values
+    relation.joins_values = joins_values
+    relation.limit_value = limit_value
+    relation.group_values = group_values
+    relation.distinct_value = distinct_value
+    relation.order_values = order_values
+    relation.offset_value = offset_value
+    relation.references_values = references_values
   end
 
   def rails_or_spwan_relation(method, condition)
@@ -105,15 +105,15 @@ class ActiveRecord::Relation
   end
 
   def rails_or_get_current_scope
-    return self.clone if IS_RAILS3_FLAG
+    return clone if IS_RAILS3_FLAG
     # ref: https://github.com/rails/rails/blob/17ef58db1776a795c9f9e31a1634db7bcdc3ecdf/activerecord/lib/active_record/scoping/named.rb#L26
     # return self.all # <- cannot use this because some gem changes this method's behavior
-    return (self.current_scope || self.default_scoped).clone
+    return (current_scope || default_scoped).clone
   end
 end
 
 class ActiveRecord::Base
   def self.or(*args)
-    self.where('').or(*args)
+    where('').or(*args)
   end
 end

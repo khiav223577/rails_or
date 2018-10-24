@@ -12,12 +12,12 @@ class RailsOr::WhereBindingMixs
   end
 
   def -(other)
-    self.select{|node| !other.where_values.include?(node) }
+    select{|node| !other.where_values.include?(node) }
   end
 
   def &(other)
     common_where_values = @where_values & other.where_values
-    return self.select{|node| common_where_values.include?(node) }
+    return select{|node| common_where_values.include?(node) }
   end
 
   def select
