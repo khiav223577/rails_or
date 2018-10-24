@@ -19,7 +19,7 @@ module RailsOr
     def spwan_relation(relation, method, condition)
       new_relation = relation.klass.send(method, condition)
       new_relation.send(ASSIGN_FROM_VALUE, relation.send(FROM_VALUE_METHOD))
-      copy_values(new_relation) if IS_RAILS5_FLAG
+      copy_values(new_relation, relation) if IS_RAILS5_FLAG
       return new_relation
     end
 
@@ -47,14 +47,14 @@ module RailsOr
       return Arel::Nodes::Grouping.new(String === node ? Arel.sql(node) : node)
     end
 
-    def copy_values(from, to) # For Rails 5
-      from.joins_values = to.joins_values
-      from.limit_value = to.limit_value
-      from.group_values = to.group_values
-      from.distinct_value = to.distinct_value
-      from.order_values = to.order_values
-      from.offset_value = to.offset_value
-      from.references_values = to.references_values
+    def copy_values(to, from) # For Rails 5
+      to.joins_values      = from.joins_values
+      to.limit_value       = from.limit_value
+      to.group_values      = from.group_values
+      to.distinct_value    = from.distinct_value
+      to.order_values      = from.order_values
+      to.offset_value      = from.offset_value
+      to.references_values = from.references_values
     end
   end
 end
