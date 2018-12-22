@@ -4,9 +4,9 @@ rvm:
   - 2.3
 sudo: required
 dist: trusty
-before_install: 
+before_install:
+  - gem i rubygems-update -v '<3' && update_rubygems
   - gem install bundler
-  - gem update --system
   - gem --version
 gemfile:
   - gemfiles/3.2.gemfile
