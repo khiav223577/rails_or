@@ -386,6 +386,7 @@ Layout/AlignHash:
   Description: >-
                  Align the elements of a hash literal if they span more than
                  one line.
+  EnforcedHashRocketStyle: table
   Enabled: true
 
 Layout/AlignParameters:
@@ -1013,7 +1014,8 @@ Layout/SpaceInsideBlockBraces:
                  Checks that block braces have or don't have surrounding space.
                  For blocks taking parameters, checks that the left brace has
                  or doesn't have trailing space.
-  Enabled: false
+  SpaceBeforeBlockParameters: false
+  Enabled: true
 
 Layout/SpaceAroundBlockParameters:
   Description: 'Checks the spacing inside and after block parameters pipes.'
