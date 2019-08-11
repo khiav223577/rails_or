@@ -26,6 +26,13 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}){|f| File.basename(f) }
   spec.require_paths = ['lib']
+  spec.metadata      = {
+    'homepage_uri'      => 'https://github.com/khiav223577/rails_or',
+    'changelog_uri'     => 'https://github.com/khiav223577/rails_or/blob/master/CHANGELOG.md',
+    'source_code_uri'   => 'https://github.com/khiav223577/rails_or',
+    'documentation_uri' => 'https://www.rubydoc.info/gems/rails_or',
+    'bug_tracker_uri'   => 'https://github.com/khiav223577/rails_or/issues',
+  }
 
   spec.add_development_dependency 'bundler', '>= 1.17', '< 3.x'
   spec.add_development_dependency 'rake', '~> 12.0'
