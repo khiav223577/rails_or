@@ -8,7 +8,7 @@
 
 `rails_or` is a Ruby Gem for you to write cleaner `OR` query.
 
-Supports Rails 3.2, 4.2, 5.0, 5.1, 5.2.
+Supports Rails 3.2, 4.2, 5.0, 5.1, 5.2, 6.0.
 
 It will use built-in `or` method, which was added in Rails 5, when possible, so that you don't need to worry about that it will polulate `active_model`. Otherwise, it implements `or` method for Rails 3 and Rails 4.
 
@@ -109,28 +109,28 @@ Let `A = {id: 1}`, `B = {account: 'a'}`, and `C = {email: 'b'}`
 u = User.where(A)
 u.where(B).or(u.where(C))
 # =>
-# SELECT `users`.* FROM `users` 
+# SELECT `users`.* FROM `users`
 # WHERE `users`.`id` = 1 AND (`users`.`account` = 'a' OR `users`.`email` = 'b')
 ```
 ### (B || C) && A
 ```rb
 User.where(B).or(C).where(A)
 # =>
-# SELECT `users`.* FROM `users` 
+# SELECT `users`.* FROM `users`
 # WHERE (`users`.`account` = 'a' OR `users`.`email` = 'b') AND `users`.`id` = 1
 ```
 ### A && B || A && C
 ```rb
 User.where(A).where(B).or(User.where(A).where(C))
 # =>
-# SELECT `users`.* FROM `users` 
+# SELECT `users`.* FROM `users`
 # WHERE (`users`.`id` = 1 AND `users`.`account` = 'a' OR `users`.`id` = 1 AND `users`.`email` = 'b')
 ```
 ### A && B || C
 ```rb
 User.where(A).where(B).or(C)
 # =>
-# SELECT `users`.* FROM `users` 
+# SELECT `users`.* FROM `users`
 # WHERE (`users`.`id` = 1 AND `users`.`account` = 'a' OR `users`.`email` = 'b')
 ```
 
