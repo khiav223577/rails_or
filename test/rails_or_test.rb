@@ -81,8 +81,8 @@ class RailsOrTest < Minitest::Test
   # ● Multiple columns
   # ----------------------------------------------------------------
   def test_or_with_multiple_attributes
-    expected = Post.where('id = 1 or title = ?', "Kathenrie's post1").to_a
-    assert_equal expected, Post.where('id = 1').or(title: "Kathenrie's post1").to_a
+    expected = Post.where('id = 1 or title = ?', "Doggy's post1").to_a
+    assert_equal expected, Post.where('id = 1').or(title: "Doggy's post1").to_a
   end
 
   # ----------------------------------------------------------------
@@ -167,9 +167,9 @@ class RailsOrTest < Minitest::Test
     end
 
     def test_A_and_not_B_or_not_C # (A && !B) || !C, !C || (!B && A)
-      expected = Post.where('(title LIKE ? AND user_id != ?) OR title NOT LIKE ?', 1, "Kathenrie's %", "Pearl's %").to_a
-      assert_equal expected, Post.where('title LIKE ?', "Kathenrie's %").where.not(user_id: 1).or_not('title LIKE ?', "Pearl's %").to_a
-      assert_equal expected, Post.where.not('title LIKE ?', "Pearl's %").or(Post.where.not(user_id: 1).where('title LIKE ?', "Kathenrie's %")).to_a
+      expected = Post.where('(title LIKE ? AND user_id != ?) OR title NOT LIKE ?', 1, "Doggy's %", "Pearl's %").to_a
+      assert_equal expected, Post.where('title LIKE ?', "Doggy's %").where.not(user_id: 1).or_not('title LIKE ?', "Pearl's %").to_a
+      assert_equal expected, Post.where.not('title LIKE ?', "Pearl's %").or(Post.where.not(user_id: 1).where('title LIKE ?', "Doggy's %")).to_a
     end
   end
 
@@ -295,7 +295,7 @@ class RailsOrTest < Minitest::Test
 
   def test_or_with_from
     users = User.from(User.where(name: %w[John Pearl]))
-    user1 = users.where('subquery.name' => 'Kathenrie')
+    user1 = users.where('subquery.name' => 'Doggy')
     user2 = users.where('subquery.name' => 'Pearl')
     user1_or_2 = user1.or('subquery.name' => 'Pearl')
     assert_equal ['Pearl'], user1.or(user2).pluck('subquery.name')
@@ -304,7 +304,7 @@ class RailsOrTest < Minitest::Test
 
   def test_or_with_from_and_none
     users = User.from(User.where(name: %w[John Pearl]))
-    user1 = users.where('subquery.name' => 'Kathenrie').none
+    user1 = users.where('subquery.name' => 'Doggy').none
     user2 = users.where('subquery.name' => 'Pearl')
     user1_or_2 = user1.or('subquery.name' => 'Pearl')
     assert_equal ['Pearl'], user1.or(user2).pluck('subquery.name')

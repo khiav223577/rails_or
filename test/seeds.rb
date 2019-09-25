@@ -44,7 +44,7 @@ end
 users = User.create([
   { name: 'John', email: 'john@example.com' },
   { name: 'Pearl', email: 'pearl@example.com', serialized_attribute: { testing: true, deep: { deep: :deep }}},
-  { name: 'Kathenrie', email: 'kathenrie@example.com' },
+  { name: 'Doggy', email: 'kathenrie@example.com' },
 ])
 Post.create([
   { title: "John's post1", user_id: users[0].id, start_time: Time.parse('2016/1/1') },
@@ -52,7 +52,7 @@ Post.create([
   { title: "John's post3", user_id: users[0].id },
   { title: "Pearl's post1", user_id: users[1].id },
   { title: "Pearl's post2", user_id: users[1].id },
-  { title: "Kathenrie's post1", user_id: users[2].id, start_time: Time.parse('2016/10/15') },
+  { title: "Doggy's post1", user_id: users[2].id, start_time: Time.parse('2016/10/15') },
 ])
 UserMessage.create([
   { sender_user_id: users[0].id, receiver_user_id: users[1].id, content: 'user1 send to user2' },
