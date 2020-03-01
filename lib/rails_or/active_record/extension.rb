@@ -10,7 +10,7 @@ class ActiveRecord::Relation
     def or(*other)
       other        = RailsOr.parse_parameter(self, *other)
       combining    = group_values.any? ? :having : :where
-      left  = RailsOr::WhereBindingMixs.new(send("#{combining}_values"), bind_values)
+      left = RailsOr::WhereBindingMixs.new(send("#{combining}_values"), bind_values)
       right = RailsOr::WhereBindingMixs.new(other.send("#{combining}_values"), other.bind_values)
       common = left & right
 
