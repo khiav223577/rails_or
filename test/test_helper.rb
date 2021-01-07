@@ -1,9 +1,9 @@
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start 'test_frameworks'
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'rails_or'
 
+require 'rails_or'
 require 'minitest/autorun'
 
 ActiveRecord::Base.establish_connection(
