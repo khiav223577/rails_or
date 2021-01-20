@@ -103,7 +103,7 @@ Order.group('user_id')
 
 ## Examples
 
-Let `A = {id: 1}`, `B = {account: 'a'}`, and `C = {email: 'b'}`
+Let `A = { id: 1 }`, `B = { account: 'tester' }`, and `C = { email: 'test@example.com' }`
 
 ### A && (B || C)
 ```rb
@@ -111,28 +111,28 @@ u = User.where(A)
 u.where(B).or(u.where(C))
 # =>
 # SELECT `users`.* FROM `users`
-# WHERE `users`.`id` = 1 AND (`users`.`account` = 'a' OR `users`.`email` = 'b')
+# WHERE `users`.`id` = 1 AND (`users`.`account` = 'tester' OR `users`.`email` = 'test@example.com')
 ```
 ### (B || C) && A
 ```rb
 User.where(B).or(C).where(A)
 # =>
 # SELECT `users`.* FROM `users`
-# WHERE (`users`.`account` = 'a' OR `users`.`email` = 'b') AND `users`.`id` = 1
+# WHERE (`users`.`account` = 'tester' OR `users`.`email` = 'test@example.com') AND `users`.`id` = 1
 ```
 ### A && B || A && C
 ```rb
 User.where(A).where(B).or(User.where(A).where(C))
 # =>
 # SELECT `users`.* FROM `users`
-# WHERE (`users`.`id` = 1 AND `users`.`account` = 'a' OR `users`.`id` = 1 AND `users`.`email` = 'b')
+# WHERE (`users`.`id` = 1 AND `users`.`account` = 'tester' OR `users`.`id` = 1 AND `users`.`email` = 'test@example.com')
 ```
 ### A && B || C
 ```rb
 User.where(A).where(B).or(C)
 # =>
 # SELECT `users`.* FROM `users`
-# WHERE (`users`.`id` = 1 AND `users`.`account` = 'a' OR `users`.`email` = 'b')
+# WHERE (`users`.`id` = 1 AND `users`.`account` = 'tester' OR `users`.`email` = 'test@example.com')
 ```
 
 ## Development
