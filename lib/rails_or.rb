@@ -16,7 +16,7 @@ module RailsOr
       return (values.size > 1 ? Arel::Nodes::And.new(values) : values)
     end
 
-    def spwan_relation(relation, method, condition)
+    def spawn_relation(relation, method, condition)
       new_relation = relation.klass.send(method, condition)
       new_relation.send(ASSIGN_FROM_VALUE, relation.send(FROM_VALUE_METHOD))
       copy_values(new_relation, relation) if IS_RAILS5_FLAG
@@ -33,9 +33,9 @@ module RailsOr
     def parse_parameter(relation, *other)
       other = other.first if other.size == 1
       case other
-      when Hash   ; spwan_relation(relation, :where, other)
-      when Array  ; spwan_relation(relation, :where, other)
-      when String ; spwan_relation(relation, :where, other)
+      when Hash   ; spawn_relation(relation, :where, other)
+      when Array  ; spawn_relation(relation, :where, other)
+      when String ; spawn_relation(relation, :where, other)
       else        ; other
       end
     end
