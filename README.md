@@ -12,7 +12,7 @@ It will use built-in `or` method, which was added in Rails 5, when possible, so 
 
 ## Supports
 - Ruby 2.2 ~ 2.7
-- Rails 3.2, 4.2, 5.0, 5.1, 5.2, 6.0
+- Rails 3.2, 4.2, 5.0, 5.1, 5.2, 6.0, 6.1
 
 ## Installation
 
