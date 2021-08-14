@@ -16,9 +16,12 @@ module RailsOr
       return (values.size > 1 ? Arel::Nodes::And.new(values) : values)
     end
 
-    def spwan_relation(relation, method, condition)
+    def spawn_relation(relation, method, condition)
       new_relation = relation.klass.send(method, condition)
-      new_relation.send(ASSIGN_FROM_VALUE, relation.send(FROM_VALUE_METHOD))
+
+      from_value = relation.send(FROM_VALUE_METHOD)
+      new_relation.send(ASSIGN_FROM_VALUE, from_value) if from_value.present?
+
       copy_values(new_relation, relation) if IS_RAILS5_FLAG
       return new_relation
     end
@@ -33,9 +36,9 @@ module RailsOr
     def parse_parameter(relation, *other)
       other = other.first if other.size == 1
       case other
-      when Hash   ; spwan_relation(relation, :where, other)
-      when Array  ; spwan_relation(relation, :where, other)
-      when String ; spwan_relation(relation, :where, other)
+      when Hash   ; spawn_relation(relation, :where, other)
+      when Array  ; spawn_relation(relation, :where, other)
+      when String ; spawn_relation(relation, :where, other)
       else        ; other
       end
     end
@@ -47,12 +50,12 @@ module RailsOr
       return Arel::Nodes::Grouping.new(String === node ? Arel.sql(node) : node)
     end
 
-    def copy_values(to, from) # For Rails 5
-      to.joins_values      = from.joins_values
+    def copy_values(to, from) # For Rails 5, 6
+      to.joins_values      = from.joins_values if from.joins_values.any?
       to.limit_value       = from.limit_value
-      to.group_values      = from.group_values
+      to.group_values      = from.group_values if from.group_values.any?
       to.distinct_value    = from.distinct_value
-      to.order_values      = from.order_values
+      to.order_values      = from.order_values if from.order_values.any?
       to.offset_value      = from.offset_value
       to.references_values = from.references_values
     end

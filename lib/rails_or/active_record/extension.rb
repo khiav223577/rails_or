@@ -41,7 +41,7 @@ class ActiveRecord::Relation
   end
 
   def or_having(hash)
-    self.or(RailsOr.spwan_relation(self, :having, hash))
+    self.or(RailsOr.spawn_relation(self, :having, hash))
   end
 end
 

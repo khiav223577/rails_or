@@ -77,10 +77,6 @@ Layout/EndAlignment:
   Description: 'Align ends correctly.'
   Enabled: true
 
-Lint/EndInMethod:
-  Description: 'END blocks should not be placed inside method definitions.'
-  Enabled: true
-
 Lint/EnsureReturn:
   Description: 'Do not use return in an ensure block.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#no-return-ensure'
@@ -182,8 +178,8 @@ Lint/UselessAssignment:
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#underscore-unused-vars'
   Enabled: true
 
-Lint/UselessComparison:
-  Description: 'Checks for comparison of something with itself.'
+Lint/BinaryOperatorWithIdenticalOperands:
+  Description: 'This cop checks for places where binary operator has identical operands.'
   Enabled: true
 
 Lint/UselessElseWithoutRescue:
@@ -1121,7 +1117,7 @@ Style/SymbolProc:
   Description: 'Use symbols as procs instead of blocks when possible.'
   Enabled: true
 
-Layout/Tab:
+Layout/IndentationStyle:
   Description: 'No hard tabs.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#spaces-indentation'
   Enabled: true
