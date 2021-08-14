@@ -20,7 +20,7 @@ module RailsOr
       new_relation = relation.klass.send(method, condition)
 
       from_value = relation.send(FROM_VALUE_METHOD)
-      new_relation.send(ASSIGN_FROM_VALUE, from_value) if not from_value.empty?
+      new_relation.send(ASSIGN_FROM_VALUE, from_value) if from_value.present?
 
       copy_values(new_relation, relation) if IS_RAILS5_FLAG
       return new_relation
