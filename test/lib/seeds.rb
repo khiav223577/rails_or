@@ -6,11 +6,13 @@ ActiveRecord::Schema.define do
     t.string :email
     t.text :serialized_attribute
   end
+
   create_table :posts, force: true do |t|
     t.integer :user_id
     t.string :title
     t.datetime :start_time
   end
+
   create_table :user_messages, force: true do |t|
     t.integer :sender_user_id
     t.integer :receiver_user_id
@@ -18,36 +20,21 @@ ActiveRecord::Schema.define do
   end
 end
 
-class User < ActiveRecord::Base
-  serialize :serialized_attribute, Hash
-  has_many :posts
-  has_many :sent_messages,     class_name: 'UserMessage', foreign_key: :sender_user_id,   dependent: :destroy
-  has_many :received_messages, class_name: 'UserMessage', foreign_key: :receiver_user_id, dependent: :destroy
+ActiveSupport::Dependencies.autoload_paths << File.expand_path('../models/', __FILE__)
 
-  scope :none, ->{ where('0') } if not User.respond_to?(:none) # For Rails 3
-  if RailsOr::IS_RAILS3_FLAG
-    class << self
-      alias origin_from from if not method_defined?(:origin_from)
-      def from(string)
-        return origin_from if string.is_a?(String)
-        return origin_from("(#{string.to_sql}) subquery") # Rails 3's #from only support string arguments
-      end
-    end
-  end
+if ActiveSupport::VERSION::MAJOR >= 7
+  require 'zeitwerk'
+  loader = Zeitwerk::Loader.for_gem
+  ActiveSupport::Dependencies.autoload_paths.each{|path| loader.push_dir(path) }
+  loader.setup
 end
 
-class Post < ActiveRecord::Base
-  belongs_to :user
-  scope :with_title_like, proc{|s| where('title LIKE ?', s) }
-end
-
-class UserMessage < ActiveRecord::Base
-end
 users = User.create([
   { name: 'John', email: 'john@example.com' },
   { name: 'Pearl', email: 'pearl@example.com', serialized_attribute: { testing: true, deep: { deep: :deep }}},
   { name: 'Doggy', email: 'kathenrie@example.com' },
 ])
+
 Post.create([
   { title: "John's post1", user_id: users[0].id, start_time: Time.parse('2016/1/1') },
   { title: "John's post2", user_id: users[0].id, start_time: Time.parse('2016/2/1') },
@@ -56,6 +43,7 @@ Post.create([
   { title: "Pearl's post2", user_id: users[1].id },
   { title: "Doggy's post1", user_id: users[2].id, start_time: Time.parse('2016/10/15') },
 ])
+
 UserMessage.create([
   { sender_user_id: users[0].id, receiver_user_id: users[1].id, content: 'user1 send to user2' },
   { sender_user_id: users[0].id, receiver_user_id: users[2].id, content: 'user1 send to user3' },
