@@ -24,6 +24,7 @@ jobs:
           - 2.6
           - 2.7
           - 3.0
+          - 3.1
         gemfile:
           - 3.2.gemfile
           - 4.2.gemfile
@@ -39,19 +40,31 @@ jobs:
             ruby: 2.7
           - gemfile: 3.2.gemfile
             ruby: 3.0
+          - gemfile: 3.2.gemfile
+            ruby: 3.1
           - gemfile: 4.2.gemfile
             ruby: 2.7
           - gemfile: 4.2.gemfile
             ruby: 3.0
+          - gemfile: 4.2.gemfile
+            ruby: 3.1
           - gemfile: 5.0.gemfile
             ruby: 3.0
+          - gemfile: 5.0.gemfile
+            ruby: 3.1
           - gemfile: 5.1.gemfile
             ruby: 3.0
+          - gemfile: 5.1.gemfile
+            ruby: 3.1
           - gemfile: 5.2.gemfile
             ruby: 3.0
+          - gemfile: 5.2.gemfile
+            ruby: 3.1
           - gemfile: 6.0.gemfile
             ruby: 2.2
           - gemfile: 6.1.gemfile
+            ruby: 2.2
+          - gemfile: 7.0.gemfile
             ruby: 2.2
     env:
       BUNDLE_GEMFILE: "gemfiles/${{ matrix.gemfile }}"
