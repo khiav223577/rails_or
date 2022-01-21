@@ -20,14 +20,8 @@ ActiveRecord::Schema.define do
   end
 end
 
-ActiveSupport::Dependencies.autoload_paths << File.expand_path('../models/', __FILE__)
-
-if ActiveSupport::VERSION::MAJOR >= 7
-  require 'zeitwerk'
-  loader = Zeitwerk::Loader.for_gem
-  ActiveSupport::Dependencies.autoload_paths.each{|path| loader.push_dir(path) }
-  loader.setup
-end
+require 'rails_compatibility/setup_autoload_paths'
+RailsCompatibility.setup_autoload_paths [File.expand_path('../models/', __FILE__)]
 
 users = User.create([
   { name: 'John', email: 'john@example.com' },
