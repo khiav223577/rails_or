@@ -23,6 +23,9 @@ end
 require 'rails_compatibility/setup_autoload_paths'
 RailsCompatibility.setup_autoload_paths [File.expand_path('../models/', __FILE__)]
 
+ActiveRecord::Base.use_yaml_unsafe_load = true if ActiveRecord::Base.method_defined?(:use_yaml_unsafe_load) # For Rails 5.2
+ActiveRecord.use_yaml_unsafe_load = true if ActiveRecord.respond_to?(:use_yaml_unsafe_load) # For Rails 7.0
+
 users = User.create([
   { name: 'John', email: 'john@example.com' },
   { name: 'Pearl', email: 'pearl@example.com', serialized_attribute: { testing: true, deep: { deep: :deep }}},
