@@ -11,8 +11,8 @@
 It will use built-in `or` method, which was added in Rails 5, when possible, so that you don't need to worry about that it will polulate `active_model`. Otherwise, it implements `or` method for Rails 3 and Rails 4.
 
 ## Supports
-- Ruby 2.3 ~ 2.7, 3.0 ~ 3.1
-- Rails 3.2, 4.2, 5.0, 5.1, 5.2, 6.0, 6.1, 7.0
+- Ruby 2.3 ~ 2.7, 3.0 ~ 3.2
+- Rails 3.2, 4.2, 5.0, 5.1, 5.2, 6.0, 6.1, 7.0, 7.2
 
 ## Installation
 

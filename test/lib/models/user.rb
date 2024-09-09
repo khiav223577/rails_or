@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 class User < ActiveRecord::Base
-  serialize :serialized_attribute, Hash
+  if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('7.1.0')
+    serialize :serialized_attribute, Hash
+  else
+    serialize :serialized_attribute, type: Hash
+  end
+
   has_many :posts
   has_many :sent_messages,     class_name: 'UserMessage', foreign_key: :sender_user_id,   dependent: :destroy
   has_many :received_messages, class_name: 'UserMessage', foreign_key: :receiver_user_id, dependent: :destroy
