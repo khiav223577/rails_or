@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'rails_or'
   spec.version       = RailsOr::VERSION
   spec.authors       = ['khiav reoy']
-  spec.email         = ['mrtmrt15xn@yahoo.com.tw']
+  spec.email         = ['khiav223577@gmail.com']
 
   spec.summary       = 'Support && Add syntax sugar to #or query method.'
   spec.description   = 'Support && Add syntax sugar to #or query method in Rails 3, 4, 5.'
